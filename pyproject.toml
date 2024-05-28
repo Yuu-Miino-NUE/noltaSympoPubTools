@@ -19,6 +19,6 @@ dependencies = [
     "numpy",
     "pypdf",
     "pydantic",
-    "dotenv",
+    "python-dotenv",
     "PdfStampTools@git+https://github.com/Yuu-Miino-NUE/PdfStampTools"
 ]
