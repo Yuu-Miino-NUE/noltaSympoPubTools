@@ -4,8 +4,8 @@ from typing import Sequence
 
 from ..sheet2json import Session
 from ..json2tex import SSOrganizer
-
-from ._classes import AsList, MSession, MPaper, MCommon, Award, CommonInfo
+from ..fundamentals import MetaSession, MetaPaper, MetaCommon, AsList, CommonInfo
+from ..fundamentals._json2metaCSV import Award
 
 __all__ = [
     "load_common",
@@ -17,7 +17,7 @@ __all__ = [
 
 def load_sessions(
     data_json: str, ss_organizers_json: str, common_json: str
-) -> list[MSession]:
+) -> list[MetaSession]:
     """Load session information from JSON file.
 
     Parameters
@@ -31,7 +31,7 @@ def load_sessions(
 
     Returns
     -------
-    list[MSession]
+    list[MetaSession]
         List of session information.
     """
 
@@ -46,7 +46,7 @@ def load_sessions(
         cities = common_data.event_city
         venues = common_data.event_venue
 
-    sessions: list[MSession] = []
+    sessions: list[MetaSession] = []
 
     for ss in s_data:
         if ss.category[0] != "s":
@@ -61,7 +61,7 @@ def load_sessions(
                 print(f"Session {ss.code} not found in {ss_organizers_json}")
                 raise
 
-        session = MSession(
+        session = MetaSession(
             comment="",
             number=ss.code,
             name=ss.name,
@@ -103,7 +103,7 @@ def save_data_as_csv(filename: str, data: Sequence[AsList], template: str):
             writer.writerow(d.as_list())
 
 
-def load_papers(data_json: str, award_json: str) -> list[MPaper]:
+def load_papers(data_json: str, award_json: str) -> list[MetaPaper]:
     """Load paper information from JSON file.
 
     Parameters
@@ -115,7 +115,7 @@ def load_papers(data_json: str, award_json: str) -> list[MPaper]:
 
     Returns
     -------
-    list[MPaper]
+    list[MetaPaper]
         List of paper information.
     """
 
@@ -125,7 +125,7 @@ def load_papers(data_json: str, award_json: str) -> list[MPaper]:
     with open(award_json, "r") as f:
         a_data = [Award(**a) for a in json.load(f)]
 
-    papers: list[MPaper] = []
+    papers: list[MetaPaper] = []
 
     for ss in s_data:
         for p in ss.papers:
@@ -138,7 +138,7 @@ def load_papers(data_json: str, award_json: str) -> list[MPaper]:
             except ValueError:
                 awards = []
 
-            paper = MPaper(
+            paper = MetaPaper(
                 comment="",
                 title=p.title,
                 filename=filename,
@@ -156,7 +156,7 @@ def load_papers(data_json: str, award_json: str) -> list[MPaper]:
     return papers
 
 
-def load_common(common_json: str) -> MCommon:
+def load_common(common_json: str) -> MetaCommon:
     """Load common information from JSON file.
 
     Parameters
@@ -166,13 +166,17 @@ def load_common(common_json: str) -> MCommon:
 
     Returns
     -------
-    MCommon
+    MetaCommon
         Common information.
+
+    Notes
+    -----
+    The JSON file should have the structure of ``CommonInfo``.
     """
     with open(common_json, "r") as f:
         data = CommonInfo(**json.load(f))
 
-    return MCommon(
+    return MetaCommon(
         comment="",
         conf_abbr=data.conf_abbr,
         year=str(data.year),

@@ -7,27 +7,51 @@ from pydantic import BaseModel
 T = TypeVar("T")
 Comment: TypeAlias = Literal["", "#"]
 
-
-__all__ = ["MCommon", "MSession", "MPaper"]
+__all__ = [
+    "MetaPerson",
+    "MetaSession",
+    "MetaPaper",
+    "MetaCommon",
+    "AsList",
+    "Award",
+    "CommonInfo",
+]
 
 
 class Award(BaseModel):
+    """Award information to load from the JSON file."""
+
     id: str
+    """Award ID."""
     awards: list[str]
+    """Awards received."""
 
 
 class CommonInfo(BaseModel):
+    """Common information to load from the JSON file."""
+
     conf_abbr: str
+    """Conference abbreviation."""
     year: int
+    """Year."""
     event_name: str
+    """Event name."""
     event_date: tuple[date, date]
+    """Event date."""
     event_city: list[str]
+    """Event city."""
     event_venue: list[str]
+    """Event venue."""
     event_web_url: str
+    """Event website URL."""
     cooperators: tuple[list[str], list[str], list[str], list[str]]
+    """Cooperators."""
     publication: str
+    """Publication."""
     date_published: date
+    """Date published."""
     publisher: str
+    """Publisher."""
 
 
 class Str(str):
@@ -60,7 +84,15 @@ class Url(str):
         self.value = value
 
 
-class MPerson:
+class MetaPerson:
+    """Person information in the context of the Metadata CSV.
+
+    Parameters
+    ----------
+    fullname : str
+        Full name.
+    """
+
     def __init__(self, fullname: str) -> None:
         self.fullname = fullname.split()
         self.fullname.reverse()
@@ -108,7 +140,7 @@ class AsList:
         return [str(a) for a in self.__dict__.values()]
 
 
-class MSession(AsList):
+class MetaSession(AsList):
     """Session information in the context of the Metadata CSV.
 
     Parameters
@@ -152,9 +184,11 @@ class MSession(AsList):
         self.number = Id(number)  # 2
         self.name = Str(name)  # 3
         self.date = Date(date)  # 4
-        self.organizers: AtList[MPerson] = AtList([MPerson(o) for o in organizers])  # 5
+        self.organizers: AtList[MetaPerson] = AtList(
+            [MetaPerson(o) for o in organizers]
+        )  # 5
         self.org_affils: AtList[Str] = AtList([Str(a) for a in org_affils])  # 6
-        self.chairs: AtList[MPerson] = AtList([MPerson(c) for c in chairs])  # 7
+        self.chairs: AtList[MetaPerson] = AtList([MetaPerson(c) for c in chairs])  # 7
         self.chair_affils: AtList[Str] = AtList([Str(ca) for ca in chair_affils])  # 8
         self.cities = Strs([Str(c) for c in cities])  # 9
         self.venues = Strs([Str(v) for v in venues])  # 10
@@ -174,7 +208,7 @@ class Text:
         return self.text
 
 
-class MPaper(AsList):
+class MetaPaper(AsList):
     """Paper information in the context of the Metadata CSV.
 
     Parameters
@@ -232,11 +266,13 @@ class MPaper(AsList):
         self.volume = ""  # 9
         self.number = Id(number)  # 10
         self.awards = Strs([Str(a) for a in awards])  # 11
-        self.authors: AtList[MPerson] = AtList([MPerson(a) for a in authors])  # 12
+        self.authors: AtList[MetaPerson] = AtList(
+            [MetaPerson(a) for a in authors]
+        )  # 12
         self.affils: AtList[Str] = AtList([Str(a) for a in affils])  # 13
 
 
-class MCommon(AsList):
+class MetaCommon(AsList):
     """Common information in the context of the Metadata CSV.
 
     Parameters

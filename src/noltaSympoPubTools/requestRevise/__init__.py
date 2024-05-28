@@ -1,3 +1,6 @@
-from .__main__ import *
-from .check import *
-from .email_tools import *
+from ._core import *
+from ._email import *
+
+__all__ = []
+__all__ += _core.__all__
+__all__ += _email.__all__
