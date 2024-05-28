@@ -22,9 +22,7 @@ class Award(BaseModel):
     """Award information to load from the JSON file."""
 
     id: str
-    """Award ID."""
     awards: list[str]
-    """Awards received."""
 
 
 class CommonInfo(BaseModel):

@@ -22,6 +22,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_copybutton",
     "sphinx.ext.viewcode",
+    "sphinxcontrib.autodoc_pydantic",
 ]
 
 templates_path = ["_templates"]
@@ -38,3 +39,13 @@ html_theme_options = {
     "repository_url": "https://github.com/Yuu-Miino-NUE/noltaSympoPubTools",
     "use_repository_button": True,
 }
+
+
+# -- Options for autodoc_pydantic --------------------------------------------
+# https://autodoc-pydantic.readthedocs.io/en/stable/users/configuration.html
+autodoc_pydantic_model_show_json = False
+autodoc_pydantic_model_show_field_summary = True
+autodoc_pydantic_model_member_order = "bysource"
+# autodoc_pydantic_model_signature_prefix = "class"
+# autodoc_pydantic_model_members = True
+autodoc_pydantic_model_undoc_members = False
