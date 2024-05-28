@@ -2,7 +2,9 @@ import json, os
 from datetime import datetime
 
 from ..sheet2json import Session
-from .tools import template as _template
+from ._utils import template as _template
+
+__all__ = ["json2spanelTex"]
 
 
 # 1: Session ID, #2: Title, #3: Chair Name Information

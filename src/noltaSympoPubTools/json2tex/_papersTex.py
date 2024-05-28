@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 from ..sheet2json import Session, Person
-from .tools import escape_tex as _escape_tex, template as _template
+from ._utils import escape_tex as _escape_tex, template as _template
 
 
 __all__ = ["json2papersTex"]

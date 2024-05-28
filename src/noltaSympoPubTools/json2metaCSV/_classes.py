@@ -8,6 +8,9 @@ T = TypeVar("T")
 Comment: TypeAlias = Literal["", "#"]
 
 
+__all__ = ["MCommon", "MSession", "MPaper"]
+
+
 class Award(BaseModel):
     id: str
     awards: list[str]
@@ -57,7 +60,7 @@ class Url(str):
         self.value = value
 
 
-class Person:
+class MPerson:
     def __init__(self, fullname: str) -> None:
         self.fullname = fullname.split()
         self.fullname.reverse()
@@ -105,7 +108,33 @@ class AsList:
         return [str(a) for a in self.__dict__.values()]
 
 
-class Session(AsList):
+class MSession(AsList):
+    """Session information in the context of the Metadata CSV.
+
+    Parameters
+    ----------
+    comment : Comment
+        Comment.
+    number : str
+        Session number.
+    name : str
+        Session name.
+    date : date
+        Session date.
+    organizers : list[str]
+        Organizers.
+    org_affils : list[str]
+        Organizers' affiliations.
+    chairs : list[str]
+        Chairs.
+    chair_affils : list[str]
+        Chairs' affiliations.
+    cities : list[str]
+        Cities.
+    venues : list[str]
+        Venues.
+    """
+
     def __init__(
         self,
         comment: Comment,
@@ -123,9 +152,9 @@ class Session(AsList):
         self.number = Id(number)  # 2
         self.name = Str(name)  # 3
         self.date = Date(date)  # 4
-        self.organizers: AtList[Person] = AtList([Person(o) for o in organizers])  # 5
+        self.organizers: AtList[MPerson] = AtList([MPerson(o) for o in organizers])  # 5
         self.org_affils: AtList[Str] = AtList([Str(a) for a in org_affils])  # 6
-        self.chairs: AtList[Person] = AtList([Person(c) for c in chairs])  # 7
+        self.chairs: AtList[MPerson] = AtList([MPerson(c) for c in chairs])  # 7
         self.chair_affils: AtList[Str] = AtList([Str(ca) for ca in chair_affils])  # 8
         self.cities = Strs([Str(c) for c in cities])  # 9
         self.venues = Strs([Str(v) for v in venues])  # 10
@@ -145,7 +174,35 @@ class Text:
         return self.text
 
 
-class Paper(AsList):
+class MPaper(AsList):
+    """Paper information in the context of the Metadata CSV.
+
+    Parameters
+    ----------
+    comment : Comment
+        Comment.
+    title : str
+        Title.
+    filename : str
+        Filename.
+    abstract : str
+        Abstract.
+    keywords : list[str]
+        Keywords.
+    pages : tuple[int, int] | None
+        Pages, or None if not available.
+    session : str
+        Session ID.
+    number : str
+        Paper number.
+    awards : list[str]
+        Awards received.
+    authors : list[str]
+        Authors.
+    affils : list[str]
+        Affiliations of authors.
+    """
+
     def __init__(
         self,
         comment: Comment,
@@ -175,11 +232,41 @@ class Paper(AsList):
         self.volume = ""  # 9
         self.number = Id(number)  # 10
         self.awards = Strs([Str(a) for a in awards])  # 11
-        self.authors: AtList[Person] = AtList([Person(a) for a in authors])  # 12
+        self.authors: AtList[MPerson] = AtList([MPerson(a) for a in authors])  # 12
         self.affils: AtList[Str] = AtList([Str(a) for a in affils])  # 13
 
 
-class Common(AsList):
+class MCommon(AsList):
+    """Common information in the context of the Metadata CSV.
+
+    Parameters
+    ----------
+    comment : Comment
+        Comment.
+    conf_abbr : str
+        Conference name abbreviation.
+    year : str
+        Year.
+    event_name : str
+        Event name.
+    event_date : tuple[date, date]
+        Event date.
+    event_city : list[str]
+        Event city.
+    event_venue : list[str]
+        Event venue.
+    event_web_url : str
+        Event website URL.
+    cooperators : tuple[list[str], list[str], list[str], list[str]]
+        Cooperators.
+    publication : str
+        Publication.
+    date_published : date
+        Date published.
+    publisher : str
+        Publisher.
+    """
+
     def __init__(
         self,
         comment: Comment,

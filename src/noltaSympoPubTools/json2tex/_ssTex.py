@@ -2,7 +2,7 @@ import json
 from pydantic import BaseModel
 
 from ..sheet2json import Session, Person
-from .tools import template as _template, escape_tex as _escape_tex
+from ._utils import template as _template, escape_tex as _escape_tex
 
 __all__ = ["json2ssTex", "SSOrganizer"]
 

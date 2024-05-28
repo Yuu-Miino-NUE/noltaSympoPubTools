@@ -2,17 +2,22 @@ import json
 import csv
 from typing import Sequence
 
-from ..sheet2json import Session as jSession
+from ..sheet2json import Session
 from ..json2tex import SSOrganizer
 
-from .classes import AsList, Session, Paper, Common, Award, CommonInfo
+from ._classes import AsList, MSession, MPaper, MCommon, Award, CommonInfo
 
-__all__ = ["load_common", "load_papers", "load_sessions", "save_data_as_csv"]
+__all__ = [
+    "load_common",
+    "load_papers",
+    "load_sessions",
+    "save_data_as_csv",
+]
 
 
 def load_sessions(
     data_json: str, ss_organizers_json: str, common_json: str
-) -> list[Session]:
+) -> list[MSession]:
     """Load session information from JSON file.
 
     Parameters
@@ -26,12 +31,12 @@ def load_sessions(
 
     Returns
     -------
-    list[Session]
+    list[MSession]
         List of session information.
     """
 
     with open(data_json, "r") as f:
-        s_data = [jSession(**s) for s in json.load(f)]
+        s_data = [Session(**s) for s in json.load(f)]
 
     with open(ss_organizers_json, "r") as f:
         ss_org_data = [SSOrganizer(**sso) for sso in json.load(f)]
@@ -41,7 +46,7 @@ def load_sessions(
         cities = common_data.event_city
         venues = common_data.event_venue
 
-    sessions: list[Session] = []
+    sessions: list[MSession] = []
 
     for ss in s_data:
         if ss.category[0] != "s":
@@ -56,7 +61,7 @@ def load_sessions(
                 print(f"Session {ss.code} not found in {ss_organizers_json}")
                 raise
 
-        session = Session(
+        session = MSession(
             comment="",
             number=ss.code,
             name=ss.name,
@@ -98,7 +103,7 @@ def save_data_as_csv(filename: str, data: Sequence[AsList], template: str):
             writer.writerow(d.as_list())
 
 
-def load_papers(data_json: str, award_json: str) -> list[Paper]:
+def load_papers(data_json: str, award_json: str) -> list[MPaper]:
     """Load paper information from JSON file.
 
     Parameters
@@ -110,17 +115,17 @@ def load_papers(data_json: str, award_json: str) -> list[Paper]:
 
     Returns
     -------
-    list[Paper]
+    list[MPaper]
         List of paper information.
     """
 
     with open(data_json, "r") as f:
-        s_data = [jSession(**s) for s in json.load(f)]
+        s_data = [Session(**s) for s in json.load(f)]
 
     with open(award_json, "r") as f:
         a_data = [Award(**a) for a in json.load(f)]
 
-    papers: list[Paper] = []
+    papers: list[MPaper] = []
 
     for ss in s_data:
         for p in ss.papers:
@@ -133,7 +138,7 @@ def load_papers(data_json: str, award_json: str) -> list[Paper]:
             except ValueError:
                 awards = []
 
-            paper = Paper(
+            paper = MPaper(
                 comment="",
                 title=p.title,
                 filename=filename,
@@ -151,7 +156,7 @@ def load_papers(data_json: str, award_json: str) -> list[Paper]:
     return papers
 
 
-def load_common(common_json: str) -> Common:
+def load_common(common_json: str) -> MCommon:
     """Load common information from JSON file.
 
     Parameters
@@ -161,13 +166,13 @@ def load_common(common_json: str) -> Common:
 
     Returns
     -------
-    Common
+    MCommon
         Common information.
     """
     with open(common_json, "r") as f:
         data = CommonInfo(**json.load(f))
 
-    return Common(
+    return MCommon(
         comment="",
         conf_abbr=data.conf_abbr,
         year=str(data.year),
