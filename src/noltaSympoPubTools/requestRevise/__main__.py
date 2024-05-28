@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 import pandas as pd, numpy as np, json
-from . import Person, Session
+from .. import Person, Session
 
 
 class ReviseItem(BaseModel):
