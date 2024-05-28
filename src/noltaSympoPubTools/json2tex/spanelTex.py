@@ -1,7 +1,7 @@
 import json, os
 from datetime import datetime
-from sheet2json import Session
 
+from ..sheet2json import Session
 from .tools import template as _template
 
 

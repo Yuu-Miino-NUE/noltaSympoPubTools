@@ -2,8 +2,8 @@ import json
 import csv
 from typing import Sequence
 
-from sheet2json import Session as jSession
-from json2tex import SSOrganizer
+from ..sheet2json import Session as jSession
+from ..json2tex import SSOrganizer
 
 from .classes import AsList, Session, Paper, Common, Award, CommonInfo
 

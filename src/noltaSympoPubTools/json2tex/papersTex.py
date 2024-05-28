@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 
-from sheet2json import Session, Person
+from ..sheet2json import Session, Person
 from .tools import escape_tex as _escape_tex, template as _template
 
 

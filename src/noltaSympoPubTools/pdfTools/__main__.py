@@ -2,7 +2,7 @@ import json, os
 from pypdf import PdfMerger
 
 from PdfStampTools import stamp_pdf, NumberEnclosure
-from sheet2json import Session
+from ..sheet2json import Session
 
 __all__ = ["stamp_logo_and_pages", "stamp_single", "merge_all_pdfs_in_dir"]
 
