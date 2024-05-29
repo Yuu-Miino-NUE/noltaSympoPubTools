@@ -1,6 +1,7 @@
 accessible-pygments==0.0.5
 alabaster==0.7.16
 annotated-types==0.7.0
+autodoc_pydantic==2.2.0
 Babel==2.15.0
 beautifulsoup4==4.12.3
 black==23.7.0
@@ -24,6 +25,7 @@ PdfStampTools @ git+https://github.com/Yuu-Miino-NUE/PdfStampTools.git@a8fae9eb4
 Pillow==10.0.0
 platformdirs==3.8.1
 pydantic==2.7.1
+pydantic-settings==2.2.1
 pydantic_core==2.18.2
 pydata-sphinx-theme==0.15.2
 Pygments==2.18.0
