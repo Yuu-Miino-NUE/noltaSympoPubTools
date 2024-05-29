@@ -14,22 +14,6 @@ __all__ = [
     "save_emails",
 ]
 
-# Load environment variables
-load_dotenv()
-
-# Set up logging
-if (log_config_file := os.getenv("LOG_CONFIG")) is not None:
-    try:
-        with open(log_config_file, "r") as f:
-            log_conf = json.load(f)
-        config.dictConfig(log_conf)
-
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Log config file not found: {log_config_file}")
-
-logger = getLogger(__name__)
-log_dir = os.getenv("LOG_DIR") or ".log"
-
 
 def _load_config() -> SMTPConfig:
     mandatory_keys = ["SMTP_SERVER", "SMTP_PORT", "SMTP_USER", "SMTP_USERNAME"]
@@ -47,7 +31,9 @@ def _load_config() -> SMTPConfig:
     return SMTPConfig(**d)
 
 
-def send_email(msg: MIMEText, dry_run=True, dump=True) -> bool:
+def send_email(
+    msg: MIMEText, dry_run: bool = True, dump: bool = True, load_env: bool = False
+) -> bool:
     """Send email
 
     Parameters
@@ -58,14 +44,16 @@ def send_email(msg: MIMEText, dry_run=True, dump=True) -> bool:
         If True, the email is not sent, by default True
     dump : bool, optional
         If True, the email is saved to a file, by default True
+    load_env : bool, optional
+        If True, load environment variables written in a .env file, by default False
 
     Returns
     -------
     bool
         True if the email is sent successfully.
 
-    Notes
-    -----
+    Note
+    ----
     ``send_email`` uses the SMTP server specified in the environment variables.
     Please set the following environment variables:
 
@@ -77,7 +65,39 @@ def send_email(msg: MIMEText, dry_run=True, dump=True) -> bool:
 
     ``send_email`` also logs the email message to the log file specified in the environment variable LOG_DIR.
     Configuration for logging can be set in a JSON file and specified in the environment variable LOG_CONFIG.
+
+    One will prepare a ``.env`` file with the following content:
+
+    .. code-block:: shell
+
+            SMTP_SERVER=smtp.example.com
+            SMTP_PORT=587
+            SMTP_USER=YOUR_EMAIL_ADDRESS
+            SMTP_USERNAME=YOUR_NAME
+            SMTP_PASSWORD=YOUR_PASSWORD
+            LOG_DIR=.log
+            LOG_CONFIG=log_config.json
+
     """
+    # Load environment variables
+    if load_env:
+        load_dotenv()
+
+    # Set up logging
+    if (log_config_file := os.getenv("LOG_CONFIG")) is not None:
+        try:
+            with open(log_config_file, "r") as f:
+                log_conf = json.load(f)
+            config.dictConfig(log_conf)
+
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Specified log config file not found: {log_config_file}"
+            )
+
+    logger = getLogger(__name__)
+    log_dir = os.getenv("LOG_DIR") or ".log"
+
     try:
         CONFIG = _load_config()
         s = smtplib.SMTP(CONFIG.SMTP_SERVER, CONFIG.SMTP_PORT)
@@ -153,6 +173,14 @@ def compose_emails(input_json: str, subject: str, template_file: str) -> list[MI
     ------
     ValueError
         If email address is not found.
+
+    Note
+    ----
+    The JSON file should have the structure of :class:`noltaSympoPubTools.models.ReviseItem`.
+
+    See Also
+    --------
+    noltaSympoPubTools.models.ReviseItem: Data class for revise item.
     """
     with open(input_json) as f:
         data = [ReviseItem(**r) for r in json.load(f)]

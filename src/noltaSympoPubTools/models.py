@@ -23,6 +23,7 @@ __all__ = [
     "Metadata",
     "Award",
     "CommonInfo",
+    "ReviseItem",
 ]
 
 
@@ -485,6 +486,24 @@ class Session(BaseModel):
 
 
 class ReviseItem(BaseModel):
+    """Item to be revised.
+
+    Parameters
+    ----------
+    pdfname : str
+        PDF file name.
+    errors : list[str]
+        List of errors.
+    ext_msg : str | None
+        Extra message.
+    paper_id : int
+        Paper ID.
+    title : str
+        Title.
+    contact : Person
+        Contact information of the corresponding author.
+    """
+
     pdfname: str
     errors: list[str]
     ext_msg: str | None
