@@ -1,3 +1,10 @@
+"""Fundamental classes for the NOLTA Symposium Publication Tools.
+
+
+.. _国際会議メタデータ仕様書: https://www.ieice.org/jpn/books/pdf/metadata.pdf
+
+"""
+
 from typing import Generic, Literal, TypeAlias, TypeVar
 from datetime import date
 
@@ -12,44 +19,139 @@ __all__ = [
     "MetaSession",
     "MetaPaper",
     "MetaCommon",
-    "AsList",
+    "Metadata",
     "Award",
     "CommonInfo",
 ]
 
 
 class Award(BaseModel):
-    """Award information to load from the JSON file."""
+    """Award information to load from the JSON file.
+
+    Parameters
+    ----------
+    id : str
+        Award ID.
+    awards : list[str]
+        Awards received.
+
+    Examples
+    --------
+    With the following JSON file:
+
+    .. code-block:: json
+
+        [
+            {
+                "id": "1",
+                "awards": ["Best Paper Award"]
+            },
+            {
+                "id": "2",
+                "awards": ["Best Paper Award", "Best Presentation Award"]
+            }
+        ]
+
+    The following code:
+
+    .. code-block:: python
+
+        with open("awards.json", "r") as f:
+            a_data = [Award(**a) for a in json.load(f)]
+
+    will create a list of :class:`Award` instances.
+
+    Note
+    ----
+    IEICE における 国際会議メタデータ仕様書_
+
+
+    """
 
     id: str
     awards: list[str]
 
 
 class CommonInfo(BaseModel):
-    """Common information to load from the JSON file."""
+    """Common information to load from the JSON file.
+
+    Parameters
+    ----------
+    conf_abbr : str
+        Conference abbreviation.
+    year : int
+        Year.
+    event_name : str
+        Event name.
+    event_date : tuple[date, date]
+        Event date.
+    event_city : list[str]
+        Event city.
+    event_venue : list[str]
+        Event venue.
+    event_web_url : str
+        Event website URL.
+    cooperators : tuple[list[str], list[str], list[str], list[str]]
+        Cooperators. （主催／共催／協賛／後援）
+    publication : str
+        Publication.
+    date_published : date
+        Date published.
+    publisher : str
+        Publisher.
+
+    Examples
+    --------
+    With the following JSON file:
+
+    .. code-block:: json
+
+        {
+            "conf_abbr": "NOLTA",
+            "year": 2024,
+            "event_name": "NOLTA 2024",
+            "event_date": ["2024-11-20", "2024-11-22"],
+            "event_city": ["Tokyo"],
+            "event_venue": ["Tokyo International Forum"],
+            "event_web_url": "https://www.nolta2024.org",
+            "cooperators": [
+                ["IEICE"],
+                ["IEEE", "RISP"],
+                [],
+                []
+            ],
+            "publication": "Proceedings of NOLTA 2024",
+            "date_published": "2024-11-20",
+            "publisher": "IEICE"
+        }
+
+    The following code:
+
+    .. code-block:: python
+
+        with open("common.json", "r") as f:
+            data = CommonInfo(**json.load(f))
+
+    will create an instance of :class:`CommonInfo`.
+
+    Note
+    ----
+    IEICE における 国際会議メタデータ仕様書_
+
+
+    """
 
     conf_abbr: str
-    """Conference abbreviation."""
     year: int
-    """Year."""
     event_name: str
-    """Event name."""
     event_date: tuple[date, date]
-    """Event date."""
     event_city: list[str]
-    """Event city."""
     event_venue: list[str]
-    """Event venue."""
     event_web_url: str
-    """Event website URL."""
     cooperators: tuple[list[str], list[str], list[str], list[str]]
-    """Cooperators."""
     publication: str
-    """Publication."""
     date_published: date
-    """Date published."""
     publisher: str
-    """Publisher."""
 
 
 class Str(str):
@@ -89,6 +191,18 @@ class MetaPerson:
     ----------
     fullname : str
         Full name.
+
+
+    Note
+    ----
+    IEICE における 国際会議メタデータ仕様書_
+
+
+    See Also
+    --------
+    MetaSession
+    MetaPaper
+
     """
 
     def __init__(self, fullname: str) -> None:
@@ -133,12 +247,12 @@ class Id:
         return self.number
 
 
-class AsList:
+class Metadata:
     def as_list(self) -> list[str]:
         return [str(a) for a in self.__dict__.values()]
 
 
-class MetaSession(AsList):
+class MetaSession(Metadata):
     """Session information in the context of the Metadata CSV.
 
     Parameters
@@ -206,7 +320,7 @@ class Text:
         return self.text
 
 
-class MetaPaper(AsList):
+class MetaPaper(Metadata):
     """Paper information in the context of the Metadata CSV.
 
     Parameters
@@ -270,7 +384,7 @@ class MetaPaper(AsList):
         self.affils: AtList[Str] = AtList([Str(a) for a in affils])  # 13
 
 
-class MetaCommon(AsList):
+class MetaCommon(Metadata):
     """Common information in the context of the Metadata CSV.
 
     Parameters

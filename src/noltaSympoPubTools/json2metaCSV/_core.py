@@ -4,8 +4,14 @@ from typing import Sequence
 
 from ..sheet2json import Session
 from ..json2tex import SSOrganizer
-from ..fundamentals import MetaSession, MetaPaper, MetaCommon, AsList, CommonInfo
-from ..fundamentals._json2metaCSV import Award
+from ..fundamentals import (
+    MetaSession,
+    MetaPaper,
+    MetaCommon,
+    Metadata,
+    CommonInfo,
+    Award,
+)
 
 __all__ = [
     "load_common",
@@ -78,14 +84,14 @@ def load_sessions(
     return sessions
 
 
-def save_data_as_csv(filename: str, data: Sequence[AsList], template: str):
+def save_data_as_csv(filename: str, data: Sequence[Metadata], template: str):
     """Save data as CSV file.
 
     Parameters
     ----------
     filename : str
         Output CSV file path.
-    data : Sequence[AsList]
+    data : Sequence[Metadata]
         Data to be saved.
     template : str
         Template CSV file path.
