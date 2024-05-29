@@ -6,7 +6,8 @@
 """
 
 from typing import Generic, Literal, TypeAlias, TypeVar
-from datetime import date
+from datetime import date, datetime, time
+import json
 
 import re
 from pydantic import BaseModel
@@ -448,3 +449,76 @@ class MetaCommon(Metadata):
         self.date_published = Date(date_published)  # 14
         self.copyright_holder = ""  # 15
         self.publisher = Str(publisher)  # 16
+
+
+class Person(BaseModel):
+    name: str
+    organization: str
+    country: str | None = None
+    email: str | None = None
+
+
+class Paper(BaseModel):
+    id: int
+    title: str
+    order: int
+    contact: Person
+    pages: tuple[int, int] | None
+    abstract: str
+    keywords: list[str]
+    authors: list[Person]
+    start_time: datetime | None = None
+    plenary: bool = False
+
+
+class Session(BaseModel):
+    name: str
+    type: str
+    code: str
+    category: tuple[str, int | None]
+    category_order: int | None
+    location: str
+    chairs: list[Person]
+    start_time: datetime
+    end_time: datetime
+    papers: list[Paper] = []
+
+
+class ReviseItem(BaseModel):
+    pdfname: str
+    errors: list[str]
+    ext_msg: str | None
+    paper_id: int
+    title: str
+    contact: Person
+
+
+class JsonEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if issubclass(obj.__class__, BaseModel):
+            return dict(obj)
+        if isinstance(obj, (datetime, date, time)):
+            return obj.isoformat()
+        return super().default(obj)
+
+
+class SMTPConfig:
+    def __init__(
+        self,
+        SMTP_SERVER: str,
+        SMTP_PORT: int,
+        SMTP_USER: str,
+        SMTP_USERNAME: str,
+        SMTP_PASSWORD: str | None = None,
+    ) -> None:
+        self.SMTP_SERVER = SMTP_SERVER
+        self.SMTP_PORT = SMTP_PORT
+        self.SMTP_USER = SMTP_USER
+        self.SMTP_USERNAME = SMTP_USERNAME
+        self.SMTP_PASSWORD = SMTP_PASSWORD
+
+
+class SSOrganizer(BaseModel):
+    category: tuple
+    title: str
+    organizers: list[Person]

@@ -22,7 +22,7 @@ clean:
 	rm -rf $(APIDOCSDIR)/*
 
 api:
-	sphinx-apidoc -t $(TEMPLATEDIR) -fTe -o $(APIDOCSDIR) $(MODULEDIR)
+	sphinx-apidoc -t $(TEMPLATEDIR) -fTMe -o $(APIDOCSDIR) $(MODULEDIR)
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

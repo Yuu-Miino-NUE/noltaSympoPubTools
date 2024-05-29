@@ -2,10 +2,10 @@ from collections.abc import Callable
 from string import ascii_uppercase
 import numpy as np
 import json
-from datetime import datetime, date, time, timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from pandas import DataFrame, read_excel, read_csv
 
-from ._classes import Session, Paper, Person
+from .models import JsonEncoder, Session, Paper, Person
 
 __all__ = [
     "xlsx2json",
@@ -14,17 +14,6 @@ __all__ = [
     "save_sessions",
     "update_sessions",
 ]
-
-
-class _JsonEncoder(json.JSONEncoder):
-    """JSON encoder for IterItems object."""
-
-    def default(self, obj):
-        if isinstance(obj, (Person, Paper, Session)):
-            return dict(obj)
-        if isinstance(obj, (datetime, date, time)):
-            return obj.isoformat()
-        return super().default(obj)
 
 
 def default_session_sort_func(s: Session) -> int:
@@ -120,7 +109,7 @@ def save_sessions(
     """
     kwargs = {
         "indent": 4,
-        "cls": _JsonEncoder,
+        "cls": JsonEncoder,
         "ensure_ascii": False,
     }
     json.dump(obj=sessions, fp=open(output, "w"), **kwargs)

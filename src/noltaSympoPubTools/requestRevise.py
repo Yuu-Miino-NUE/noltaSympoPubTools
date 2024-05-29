@@ -1,9 +1,8 @@
 import os, json
-from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 
-from ..sheet2json import Person, Session
+from .models import ReviseItem, JsonEncoder, Session
 
 __all__ = [
     "ReviseItem",
@@ -13,24 +12,6 @@ __all__ = [
     "get_records_by_ids",
     "show_revise_summary",
 ]
-
-
-class ReviseItem(BaseModel):
-    pdfname: str
-    errors: list[str]
-    ext_msg: str | None
-    paper_id: int
-    title: str
-    contact: Person
-
-
-class _JsonEncoder(json.JSONEncoder):
-    """JSON encoder for IterItems object."""
-
-    def default(self, obj):
-        if isinstance(obj, (Person, ReviseItem)):
-            return dict(obj)
-        return super().default(obj)
 
 
 def save_items(items: list[ReviseItem], output_json: str):
@@ -44,7 +25,7 @@ def save_items(items: list[ReviseItem], output_json: str):
         Output JSON file path.
     """
     with open(output_json, "w") as f:
-        json.dump(items, f, indent=4, ensure_ascii=False, cls=_JsonEncoder)
+        json.dump(items, f, indent=4, ensure_ascii=False, cls=JsonEncoder)
 
 
 def _load_err_msg_csv(input_csv: str):

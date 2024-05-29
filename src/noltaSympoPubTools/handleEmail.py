@@ -6,7 +6,7 @@ from logging import getLogger, config
 import os
 from dotenv import load_dotenv
 
-from . import ReviseItem
+from .models import ReviseItem, SMTPConfig
 
 __all__ = [
     "send_email",
@@ -29,22 +29,6 @@ if (log_config_file := os.getenv("LOG_CONFIG")) is not None:
 
 logger = getLogger(__name__)
 log_dir = os.getenv("LOG_DIR") or ".log"
-
-
-class SMTPConfig:
-    def __init__(
-        self,
-        SMTP_SERVER: str,
-        SMTP_PORT: int,
-        SMTP_USER: str,
-        SMTP_USERNAME: str,
-        SMTP_PASSWORD: str | None = None,
-    ) -> None:
-        self.SMTP_SERVER = SMTP_SERVER
-        self.SMTP_PORT = SMTP_PORT
-        self.SMTP_USER = SMTP_USER
-        self.SMTP_USERNAME = SMTP_USERNAME
-        self.SMTP_PASSWORD = SMTP_PASSWORD
 
 
 def _load_config() -> SMTPConfig:

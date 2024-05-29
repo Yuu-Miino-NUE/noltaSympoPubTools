@@ -2,15 +2,15 @@ import json
 import csv
 from typing import Sequence
 
-from ..sheet2json import Session
-from ..json2tex import SSOrganizer
-from ..fundamentals import (
+from .models import (
     MetaSession,
     MetaPaper,
     MetaCommon,
     Metadata,
     CommonInfo,
     Award,
+    Session,
+    SSOrganizer,
 )
 
 __all__ = [
