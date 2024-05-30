@@ -56,7 +56,7 @@ def _ssSessionTex(sessions: str, ss_orgs: str):
     return ssSession
 
 
-def json2ssTex(data_json: str, ss_organizers_json: str, output: str):
+def json2ss_tex(data_json: str, ss_organizers_json: str, output: str):
     """Extracts session data from ``data_json`` and ``ss_organizers_json`` and generates a LaTeX file.
 
     Parameters
@@ -185,7 +185,7 @@ def _sessionTex(
     return session
 
 
-def json2papersTex(data_json: str, output: str):
+def json2papers_tex(data_json: str, output: str):
     """Extract papers information from JSON file and generate TeX file.
 
     Parameters
@@ -272,7 +272,7 @@ def _timeslotTex(start_time: datetime, end_time: datetime):
     return timeslot
 
 
-def json2spanelTex(data_json: str, output_dir: str):
+def json2spanel_texs(data_json: str, output_dir: str):
     """Extracts schedule data from data_json and generates LaTeX files.
 
     Parameters
@@ -284,6 +284,11 @@ def json2spanelTex(data_json: str, output_dir: str):
 
     Examples
     --------
+    Here is an example of how to use the :func:`json2spanelTexs` function.
+
+    .. literalinclude:: /py_examples/ex_json2spanelTexs.py
+
+    The output TeX files will have the following structure:
 
     .. literalinclude:: /py_examples/spanels/A2L.tex
         :caption: spanels/A2L.tex
