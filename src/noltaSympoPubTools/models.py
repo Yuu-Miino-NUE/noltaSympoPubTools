@@ -5,9 +5,10 @@
 
 """
 
-from typing import Generic, Literal, TypeAlias, TypeVar
+from typing import Generic, Literal, TypeAlias, TypeVar, Sequence
 from datetime import date, datetime, time
 import json
+import csv
 
 import re
 from pydantic import BaseModel
@@ -21,6 +22,7 @@ __all__ = [
     "MetaArticle",
     "MetaCommon",
     "Metadata",
+    "MetadataList",
     "Award",
     "CommonInfo",
     "ReviseItem",
@@ -254,8 +256,79 @@ class Id:
 
 
 class Metadata:
+    """Base class for metadata."""
+
     def as_list(self) -> list[str]:
         return [str(a) for a in self.__dict__.values()]
+
+    def dump_csv(self, filename: str, template: str) -> None:
+        """Save metadata as CSV file.
+
+        Parameters
+        ----------
+        filename : str
+            Output CSV file path.
+        template : str
+            Template CSV file path. The template file should have the same structure as the output CSV file.
+            Required fields are dependent on the metadata type, but the first two rows should be the headers.
+
+        See Also
+        --------
+        .MetaCommon: Data class for common information
+        .load_common: Load common information from JSON file
+        """
+        _dump_metadata_csv(self, filename, template)
+
+
+class MetadataList:
+    """List of metadata."""
+
+    def __init__(self, data_list: Sequence[Metadata]) -> None:
+        self._lst = data_list
+
+    def __getitem__(self, index: int) -> Metadata:
+        return self._lst[index]
+
+    def dump_csv(self, filename: str, template: str) -> None:
+        """Save metadata as CSV file.
+
+        Parameters
+        ----------
+        filename : str
+            Output CSV file path.
+        template : str
+            Template CSV file path. The template file should have the same structure as the output CSV file.
+            Required fields are dependent on the metadata type, but the first two rows should be the headers.
+
+        See Also
+        --------
+        .MetaSession: Data class for session
+        .MetaArticle: Data class for paper
+        .load_sessions: Load session information from JSON file
+        .load_articles: Load paper information from JSON file
+        """
+        _dump_metadata_csv(self, filename, template)
+
+
+def _dump_metadata_csv(
+    obj: Metadata | MetadataList, filename: str, template: str
+) -> None:
+    try:
+        with open(template, "r") as f:
+            reader = csv.reader(f)
+            headers = [next(reader), next(reader)]
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Template file not found: {template}")
+
+    with open(filename, "w") as f:
+        writer = csv.writer(f)
+        writer.writerow(headers[0])
+        writer.writerow(headers[1])
+        if isinstance(obj, Metadata):
+            writer.writerow(obj.as_list())
+        else:
+            for d in obj:
+                writer.writerow(d.as_list())
 
 
 class MetaSession(Metadata):
@@ -310,6 +383,11 @@ class MetaSession(Metadata):
         self.chair_affils: AtList[Str] = AtList([Str(ca) for ca in chair_affils])  # 8
         self.cities = Strs([Str(c) for c in cities])  # 9
         self.venues = Strs([Str(v) for v in venues])  # 10
+
+
+class MetaSessions(MetadataList):
+    def __init__(self, data: Sequence[MetaSession]) -> None:
+        super().__init__(data)
 
 
 class Text:

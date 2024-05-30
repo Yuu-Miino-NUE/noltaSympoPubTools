@@ -1,4 +1,4 @@
-from noltaSympoPubTools.json2metaCSV import load_sessions, save_data_as_csv
+from noltaSympoPubTools.json2metaCSV import load_sessions
 
 sessions = load_sessions(
     data_json="data.json",
@@ -6,8 +6,7 @@ sessions = load_sessions(
     common_json="common.json",
 )
 
-save_data_as_csv(
+sessions.dump_csv(
     filename="metadata_session.csv",
-    data=sessions,
     template="session_template.csv",
 )

@@ -1,67 +1,22 @@
 import json
-import csv
-from typing import Sequence
 
 from .models import (
     MetaSession,
     MetaArticle,
     MetaCommon,
-    Metadata,
+    MetadataList,
     CommonInfo,
     Award,
     Session,
     SSOrganizer,
 )
 
-__all__ = [
-    "load_common",
-    "load_articles",
-    "load_sessions",
-    "save_data_as_csv",
-]
-
-
-def save_data_as_csv(filename: str, data: Sequence[Metadata], template: str):
-    """Save metadata as CSV file.
-
-    Parameters
-    ----------
-    filename : str
-        Output CSV file path.
-    data : Sequence[Metadata]
-        Metadata to be saved.
-    template : str
-        Template CSV file path. The template file should have the same structure as the output CSV file.
-        Required fields are dependent on the metadata type, but the first two rows should be the headers.
-
-    See Also
-    --------
-    .MetaCommon: Data class for common information
-    .MetaSession: Data class for session
-    .MetaArticle: Data class for paper
-    .load_common: Load common information from JSON file
-    .load_sessions: Load session information from JSON file
-    .load_articles: Load paper information from JSON file
-    """
-
-    try:
-        with open(template, "r") as f:
-            reader = csv.reader(f)
-            headers = [next(reader), next(reader)]
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Template file not found: {template}")
-
-    with open(filename, "w") as f:
-        writer = csv.writer(f)
-        writer.writerow(headers[0])
-        writer.writerow(headers[1])
-        for d in data:
-            writer.writerow(d.as_list())
+__all__ = ["load_common", "load_articles", "load_sessions"]
 
 
 def load_sessions(
     data_json: str, ss_organizers_json: str, common_json: str
-) -> list[MetaSession]:
+) -> MetadataList:
     """Load session information from JSON file.
 
     Parameters
@@ -77,7 +32,7 @@ def load_sessions(
 
     Returns
     -------
-    list[MetaSession]
+    MetadataList
         List of session information, each of which is an instance of :class:`.MetaSession`.
 
     Examples
@@ -104,7 +59,7 @@ def load_sessions(
 
     .. literalinclude:: /py_examples/ex_load_sessions.py
 
-    For :func:`save_data_as_csv`, the template file should have the following structure:
+    For dumping the metadata CSV file, the template file should have the following structure:
 
     .. code-block::
         :caption: session_template.csv
@@ -115,10 +70,10 @@ def load_sessions(
     See Also
     --------
     .MetaSession: Data class for session
+    .MetadataList: List of metadata
     .Session: Data class for session
     .SSOrganizer: Data class for session
     .CommonInfo: Data class for common information
-    .save_data_as_csv: Save metadata as CSV file
     """
 
     with open(data_json, "r") as f:
@@ -161,10 +116,10 @@ def load_sessions(
         )
         sessions.append(session)
 
-    return sessions
+    return MetadataList(sessions)
 
 
-def load_articles(data_json: str, award_json: str) -> list[MetaArticle]:
+def load_articles(data_json: str, award_json: str) -> MetadataList:
     """Load article information from JSON file.
 
     Parameters
@@ -176,7 +131,7 @@ def load_articles(data_json: str, award_json: str) -> list[MetaArticle]:
 
     Returns
     -------
-    list[MetaArticle]
+    MetadataList
         List containig article information, each of which is an instance of :class:`.MetaArticle`.
 
     Examples
@@ -197,7 +152,7 @@ def load_articles(data_json: str, award_json: str) -> list[MetaArticle]:
 
     .. literalinclude:: /py_examples/ex_load_articles.py
 
-    For :func:`save_data_as_csv`, the template file should have the following structure:
+    For dumping the metadata CSV file, the template file should have the following structure:
 
     .. code-block::
         :caption: article_template.csv
@@ -208,9 +163,9 @@ def load_articles(data_json: str, award_json: str) -> list[MetaArticle]:
     See Also
     --------
     .MetaArticle: Data class for paper
+    .MetadataList: List of metadata
     .Session: Data class for session
     .Award: Data class for awards
-    .save_data_as_csv: Save metadata as CSV file
 
     """
 
@@ -248,7 +203,7 @@ def load_articles(data_json: str, award_json: str) -> list[MetaArticle]:
             )
             papers.append(paper)
 
-    return papers
+    return MetadataList(papers)
 
 
 def load_common(common_json: str) -> MetaCommon:
@@ -270,7 +225,7 @@ def load_common(common_json: str) -> MetaCommon:
 
     .. literalinclude:: /py_examples/ex_load_common.py
 
-    The template file should have the following structure:
+    For dumping the metadata CSV file, the template file should have the following structure:
 
     .. code-block::
         :caption: common_template.csv
@@ -281,7 +236,7 @@ def load_common(common_json: str) -> MetaCommon:
     See Also
     --------
     .MetaCommon: Data class for common information
-    .save_data_as_csv: Save metadata as CSV file
+    .Metadata: Base class for metadata
     """
 
     with open(common_json, "r") as f:
