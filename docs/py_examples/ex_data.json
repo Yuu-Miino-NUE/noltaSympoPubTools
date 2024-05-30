@@ -1,0 +1,52 @@
+[
+    {
+        "code": "s01",
+        "name": "Session 1",
+        "category": [
+            "s",
+            1
+        ],
+        "category_order": 1,
+        "location": "Room 1",
+        "chairs": [
+            {
+                "name": "John Doe",
+                "organization": "University of Example"
+            }
+        ],
+        "start_time": "2022-01-01T09:00:00",
+        "end_time": "2022-01-01T10:30:00",
+        "papers": [
+            {
+                "id": 6000,
+                "title": "Paper 1",
+                "order": 1,
+                "contact": {
+                    "name": "John Doe",
+                    "organization": "University of Example",
+                    "country": "United States",
+                    "email": "john@example.com"
+                },
+                "pages": [
+                    1,
+                    2
+                ],
+                "abstract": "This is an abstract.",
+                "keywords": [
+                    "keyword1",
+                    "keyword2"
+                ],
+                "authors": [
+                    {
+                        "name": "John Doe",
+                        "organization": "University of Example",
+                        "country": "United States",
+                        "email":  null
+                    }
+                ],
+                "start_time": "2022-01-01T09:00:00",
+                "plenary": false
+            }
+        ]
+    }
+]

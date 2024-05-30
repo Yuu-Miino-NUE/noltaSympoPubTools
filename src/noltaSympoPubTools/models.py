@@ -18,12 +18,16 @@ Comment: TypeAlias = Literal["", "#"]
 __all__ = [
     "MetaPerson",
     "MetaSession",
-    "MetaPaper",
+    "MetaArticle",
     "MetaCommon",
     "Metadata",
     "Award",
     "CommonInfo",
     "ReviseItem",
+    "Session",
+    "SSOrganizer",
+    "Person",
+    "Paper",
 ]
 
 
@@ -203,7 +207,7 @@ class MetaPerson:
     See Also
     --------
     MetaSession
-    MetaPaper
+    MetaArticle
 
     """
 
@@ -322,7 +326,7 @@ class Text:
         return self.text
 
 
-class MetaPaper(Metadata):
+class MetaArticle(Metadata):
     """Paper information in the context of the Metadata CSV.
 
     Parameters

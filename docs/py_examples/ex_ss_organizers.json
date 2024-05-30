@@ -1,0 +1,21 @@
+[
+    {
+        "category": [
+            "s",
+            1
+        ],
+        "title": "Special Session on Example",
+        "organizers": [
+            {
+                "name": "John Doe",
+                "organization": "Example University",
+                "email": "john@example.com"
+            },
+            {
+                "name": "Taro Tanaka",
+                "organization": "Example University of Japan",
+                "email": "taro@example-u.ac.jp"
+            }
+        ]
+    }
+]
