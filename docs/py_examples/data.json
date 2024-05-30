@@ -1,7 +1,8 @@
 [
     {
-        "code": "s01",
-        "name": "Session 1",
+        "name": "Special Session on Example",
+        "type": "L",
+        "code": "A2L-2",
         "category": [
             "s",
             1

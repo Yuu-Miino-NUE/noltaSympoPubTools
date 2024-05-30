@@ -5,7 +5,7 @@ import numpy as np
 from .models import ReviseItem, JsonEncoder, Session
 
 __all__ = [
-    "csv2json",
+    "revise_csv2json",
     "get_revised_ids",
     "get_all_ids",
     "get_records_by_ids",
@@ -36,7 +36,7 @@ def _load_err_msg_csv(input_csv: str):
     return ret
 
 
-def csv2json(input_csv: str, data_json: str, output_json: str, err_msg_csv: str):
+def revise_csv2json(input_csv: str, data_json: str, output_json: str, err_msg_csv: str):
     """Convert CSV data to JSON data for revision request.
 
     Parameters

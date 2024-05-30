@@ -57,16 +57,36 @@ def _ssSessionTex(sessions: str, ss_orgs: str):
 
 
 def json2ssTex(data_json: str, ss_organizers_json: str, output: str):
-    """Extracts session data from data_json and ss_organizers_json and generates a LaTeX file.
+    """Extracts session data from ``data_json`` and ``ss_organizers_json`` and generates a LaTeX file.
 
     Parameters
     ----------
     data_json : str
-        Input JSON file path.
+        Input JSON file path. The JSON file should have the structure of :class:`.Session`.
     ss_organizers_json : str
-        Input JSON file path for session organizers.
+        Input JSON file path for session organizers. The JSON file should have the structure of :class:`.SSOrganizer`.
     output : str
         Output TeX file path.
+
+    Examples
+    --------
+    Here is an example of how to use the :func:`json2ssTex` function.
+
+    .. literalinclude:: /py_examples/ex_json2ssTex.py
+
+    The output TeX file will have the following structure:
+
+    .. literalinclude:: /py_examples/ss_list.tex
+        :caption: ss_list.tex
+        :language: latex
+
+    The generated LaTeX file includes 1 manual environment ``ssSessionTabular`` and 1 manual command ``\\ssOrgTabular``.
+    By defining them properly, you can include the generated LaTeX file in your LaTeX document.
+
+    See Also
+    --------
+    .Session: Data class for session
+    .SSOrganizer: Data class for session
     """
     with open(data_json) as f:
         ss_data = [
@@ -171,9 +191,28 @@ def json2papersTex(data_json: str, output: str):
     Parameters
     ----------
     data_json : str
-        Input JSON file path.
+        Input JSON file path. The JSON file should have the structure of :class:`.Session`.
     output : str
         Output TeX file path.
+
+    Examples
+    --------
+    Here is an example of how to use the :func:`json2papersTex` function.
+
+    .. literalinclude:: /py_examples/ex_json2papersTex.py
+
+    The output TeX file will have the following structure:
+
+    .. literalinclude:: /py_examples/papers_information.tex
+        :caption: papers_information.tex
+        :language: latex
+
+    The generated LaTeX file includes 1 manual environment ``session`` and 1 manual command ``\\pEntry``.
+    By defining them properly, you can include the generated LaTeX file in your LaTeX document.
+
+    See Also
+    --------
+    .Session: Data class for session
     """
     with open(data_json) as f:
         data = [Session(**s) for s in json.load(f)]
@@ -239,9 +278,24 @@ def json2spanelTex(data_json: str, output_dir: str):
     Parameters
     ----------
     data_json : str
-        Input JSON file path.
+        Input JSON file path. The JSON file should have the structure of :class:`.Session`.
     output_dir : str
         Output directory path.
+
+    Examples
+    --------
+
+    .. literalinclude:: /py_examples/spanels/A2L.tex
+        :caption: spanels/A2L.tex
+        :language: latex
+
+    The generated LaTeX file includes 3 manual commands: ``\\timeslot``, ``\\nosession``, and ``\\spanel``.
+    By defining them properly, you can include the generated LaTeX file in your LaTeX document.
+
+    See Also
+    --------
+    .Session: Data class for session
+
     """
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)

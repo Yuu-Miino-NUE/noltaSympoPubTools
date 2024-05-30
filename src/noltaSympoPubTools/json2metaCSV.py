@@ -39,19 +39,19 @@ def load_sessions(
     --------
     The JSON file to pass to `data_json` should have the following structure:
 
-    .. literalinclude:: /py_examples/ex_data.json
+    .. literalinclude:: /py_examples/data.json
         :caption: data.json
         :language: json
 
     The JSON file to pass to `ss_organizers_json` should have the following structure:
 
-    .. literalinclude:: /py_examples/ex_ss_organizers.json
+    .. literalinclude:: /py_examples/ss_organizers.json
         :caption: ss_organizers.json
         :language: json
 
     The JSON file to pass to `common_json` should have the following structure:
 
-    .. literalinclude:: /py_examples/ex_common.json
+    .. literalinclude:: /py_examples/common.json
         :caption: common.json
         :language: json
 
@@ -138,13 +138,13 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
     --------
     Each record in the data JSON file should have the structure of :class:`.Session`.
 
-    .. literalinclude:: /py_examples/ex_data.json
+    .. literalinclude:: /py_examples/data.json
         :caption: data.json
         :language: json
 
     Each record in the award JSON file should have the structure of :class:`.Award`.
 
-    .. literalinclude:: /py_examples/ex_award.json
+    .. literalinclude:: /py_examples/awards.json
         :caption: award.json
         :language: json
 

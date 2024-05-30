@@ -47,7 +47,7 @@ class Award(BaseModel):
     --------
     In the JSON format, the data should be structured as follows:
 
-    .. literalinclude:: /py_examples/ex_award.json
+    .. literalinclude:: /py_examples/awards.json
         :caption: awards.json
         :language: json
 
@@ -94,7 +94,7 @@ class CommonInfo(BaseModel):
     --------
     In the JSON format, the data should be structured as follows:
 
-    .. literalinclude:: /py_examples/ex_common.json
+    .. literalinclude:: /py_examples/common.json
         :caption: common.json
         :language: json
 
@@ -511,6 +511,48 @@ class Paper(BaseModel):
 
 
 class Session(BaseModel):
+    """Session information.
+
+    Parameters
+    ----------
+    name : str
+        Session name.
+    type : str
+        Session type.
+    code : str
+        Session code.
+    category : tuple[str, int | None]
+        Category information.
+    category_order : int | None
+        Category order.
+    location : str
+        Location.
+    chairs : list[Person]
+        List of chairs.
+    start_time : datetime
+        Start time.
+    end_time : datetime
+        End time.
+    papers : list[Paper]
+        List of papers.
+
+    Examples
+    --------
+    In the JSON format, the data should be structured as follows:
+
+    .. literalinclude:: /py_examples/data.json
+        :caption: data.json
+        :language: json
+
+    From the original CSV file dumped from the database, the JSON data can be generated using the :func:`.csv2json` function.
+
+    See Also
+    --------
+    .Person: Data class for person
+    .Paper: Data class for paper
+    .csv2json: Convert CSV to JSON
+    """
+
     name: str
     type: str
     code: str
@@ -591,7 +633,7 @@ class SSOrganizer(BaseModel):
     --------
     In the JSON format, the data should be structured as follows:
 
-    .. literalinclude:: /py_examples/ex_ss_organizers.json
+    .. literalinclude:: /py_examples/ss_organizers.json
         :caption: ss_organizers.json
         :language: json
     """
