@@ -5,7 +5,6 @@ import numpy as np
 from .models import ReviseItem, JsonEncoder, Session
 
 __all__ = [
-    "ReviseItem",
     "csv2json",
     "get_revised_ids",
     "get_all_ids",
