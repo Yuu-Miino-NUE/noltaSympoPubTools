@@ -1,3 +1,11 @@
+"""
+.. _国際会議メタデータ仕様書: https://www.ieice.org/jpn/books/pdf/metadata.pdf
+
+Note
+----
+IEICE における 国際会議メタデータ仕様書_ に基づいて，メタデータを生成するためのツールです．
+"""
+
 import json
 
 from .models import (
@@ -37,19 +45,19 @@ def load_sessions(
 
     Examples
     --------
-    The JSON file to pass to `data_json` should have the following structure:
+    Each record in the data JSON file should have the structure of :class:`.Session`.
 
     .. literalinclude:: /py_examples/data.json
         :caption: data.json
         :language: json
 
-    The JSON file to pass to `ss_organizers_json` should have the following structure:
+    Each record in the session organizers JSON file should have the structure of :class:`.SSOrganizer`.
 
     .. literalinclude:: /py_examples/ss_organizers.json
         :caption: ss_organizers.json
         :language: json
 
-    The JSON file to pass to `common_json` should have the following structure:
+    The JSON file to pass to `common_json` should have the structure of :class:`.CommonInfo`.
 
     .. literalinclude:: /py_examples/common.json
         :caption: common.json
@@ -61,11 +69,15 @@ def load_sessions(
 
     For dumping the metadata CSV file, the template file should have the following structure:
 
-    .. code-block::
+    .. literalinclude:: /py_examples/session_template.csv
         :caption: session_template.csv
+        :language: none
 
-        #,セッション番号,セッション,開催日,主催者1,機関1(主),座長1,機関1(座),開催都市,会場
-        #,Session identifier,Name of session,Date of session,Organizer 1,Affiliation 1 (Org. 1),Chairperson 1,Affiliation 1 (Chair. 1),City,Venue
+    The output CSV file will have the following structure:
+
+    .. literalinclude:: /py_examples/metadata_session.csv
+        :caption: metadata_session.csv
+        :language: none
 
     See Also
     --------
@@ -154,11 +166,16 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
 
     For dumping the metadata CSV file, the template file should have the following structure:
 
-    .. code-block::
+    .. literalinclude:: /py_examples/article_template.csv
         :caption: article_template.csv
+        :language: none
 
-        #,タイトル,本文ファイル名,要約,キーワード,開始ページ,終了ページ,セッション番号,volume番号,番号,表彰,"著者1@@著者2@@著者3@@著者4@@著者5@@著者6@@著者7@@著者8@@著者9@@著者10@@著者11@@著者12@@著者13@@著者14@@著者15","機関1@@機関2@@機関3@@機関4@@機関5@@機関6@@機関7@@機関8@@機関9@@機関10@@機関11@@機関12@@機関13@@機関14@@機関15"
-        #,Title,File name of article body,Abstract,Keyword(s),Start page,End page,Session identifier,Volume of publication,Article identifier,Award,"Author 1@@Author 2@@Author 3@@Author 4@@Author 5@@Author 6@@Author 7@@Author 8@@Author 9@@Author 10@@Author 11@@Author 12@@Author 13@@Author 14@@Author 15","Affiliation 1@@Affiliation 2@@Affiliation 3@@Affiliation 4@@Affiliation 5@@Affiliation 6@@Affiliation 7@@Affiliation 8@@Affiliation 9@@Affiliation 10@@Affiliation 11@@Affiliation 12@@Affiliation 13@@Affiliation 14@@Affiliation 15"
+
+    The output CSV file will have the following structure:
+
+    .. literalinclude:: /py_examples/metadata_article.csv
+        :caption: metadata_article.csv
+        :language: none
 
     See Also
     --------
@@ -221,17 +238,27 @@ def load_common(common_json: str) -> MetaCommon:
 
     Examples
     --------
+    The JSON file to pass to `common_json` should have the structure of :class:`.CommonInfo`.
+
+    .. literalinclude:: /py_examples/common.json
+        :caption: common.json
+        :language: json
+
     Here is an example of how to use the :func:`load_common` function.
 
     .. literalinclude:: /py_examples/ex_load_common.py
 
     For dumping the metadata CSV file, the template file should have the following structure:
 
-    .. code-block::
+    .. literalinclude:: /py_examples/common_template.csv
         :caption: common_template.csv
+        :language: none
 
-        #,セッション番号,セッション,開催日,主催者1,機関1(主),座長1,機関1(座),開催都市,会場
-        #,Session identifier,Name of session,Date of session,Organizer 1,Affiliation 1 (Org. 1),Chairperson 1,Affiliation 1 (Chair. 1),City,Venue
+    The output CSV file will have the following structure:
+
+    .. literalinclude:: /py_examples/metadata_common.csv
+        :caption: metadata_common.csv
+        :language: none
 
     See Also
     --------
