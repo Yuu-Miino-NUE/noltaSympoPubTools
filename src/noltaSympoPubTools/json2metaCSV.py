@@ -136,13 +136,13 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
 
     Examples
     --------
-    The JSON file to pass to `data_json` should have the following structure:
+    Each record in the data JSON file should have the structure of :class:`.Session`.
 
     .. literalinclude:: /py_examples/ex_data.json
         :caption: data.json
         :language: json
 
-    The JSON file to pass to `award_json` should have the following structure:
+    Each record in the award JSON file should have the structure of :class:`.Award`.
 
     .. literalinclude:: /py_examples/ex_award.json
         :caption: award.json

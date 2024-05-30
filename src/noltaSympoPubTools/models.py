@@ -45,29 +45,11 @@ class Award(BaseModel):
 
     Examples
     --------
-    With the following JSON file:
+    In the JSON format, the data should be structured as follows:
 
-    .. code-block:: json
-
-        [
-            {
-                "id": "1",
-                "awards": ["Best Paper Award"]
-            },
-            {
-                "id": "2",
-                "awards": ["Best Paper Award", "Best Presentation Award"]
-            }
-        ]
-
-    The following code:
-
-    .. code-block:: python
-
-        with open("awards.json", "r") as f:
-            a_data = [Award(**a) for a in json.load(f)]
-
-    will create a list of :class:`Award` instances.
+    .. literalinclude:: /py_examples/ex_award.json
+        :caption: awards.json
+        :language: json
 
     Note
     ----
@@ -110,37 +92,11 @@ class CommonInfo(BaseModel):
 
     Examples
     --------
-    With the following JSON file:
+    In the JSON format, the data should be structured as follows:
 
-    .. code-block:: json
-
-        {
-            "conf_abbr": "NOLTA",
-            "year": 2024,
-            "event_name": "NOLTA 2024",
-            "event_date": ["2024-11-20", "2024-11-22"],
-            "event_city": ["Tokyo"],
-            "event_venue": ["Tokyo International Forum"],
-            "event_web_url": "https://www.nolta2024.org",
-            "cooperators": [
-                ["IEICE"],
-                ["IEEE", "RISP"],
-                [],
-                []
-            ],
-            "publication": "Proceedings of NOLTA 2024",
-            "date_published": "2024-11-20",
-            "publisher": "IEICE"
-        }
-
-    The following code:
-
-    .. code-block:: python
-
-        with open("common.json", "r") as f:
-            data = CommonInfo(**json.load(f))
-
-    will create an instance of :class:`CommonInfo`.
+    .. literalinclude:: /py_examples/ex_common.json
+        :caption: common.json
+        :language: json
 
     Note
     ----
@@ -620,6 +576,26 @@ class SMTPConfig:
 
 
 class SSOrganizer(BaseModel):
+    """Session organizer information.
+
+    Parameters
+    ----------
+    category : tuple
+        Category information.
+    title : str
+        Session title.
+    organizers : list[Person]
+        List of organizers.
+
+    Examples
+    --------
+    In the JSON format, the data should be structured as follows:
+
+    .. literalinclude:: /py_examples/ex_ss_organizers.json
+        :caption: ss_organizers.json
+        :language: json
+    """
+
     category: tuple
     title: str
     organizers: list[Person]
