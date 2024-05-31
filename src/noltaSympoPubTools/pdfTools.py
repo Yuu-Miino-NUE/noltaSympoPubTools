@@ -4,6 +4,8 @@
 
 This module depends on the PdfStampTools_.
 
+.. _note_fpo:
+
 Note
 ----
 
@@ -28,7 +30,7 @@ from pypdf import PdfMerger
 from PdfStampTools import stamp_pdf, NumberEnclosure
 from .models import Session, Sessions
 
-__all__ = ["stamp_all_pdfs", "stamp_single_pdf", "merge_all_pdfs_in_dir"]
+__all__ = ["stamp_all_pdfs", "stamp_single_pdf", "merge_all_pdfs"]
 
 
 def stamp_all_pdfs(
@@ -49,14 +51,17 @@ def stamp_all_pdfs(
         Path to the overlay PDF file for the first page.
         If the pdf file has multiple pages, only the first page will be used.
         The overlay will only have the logo and the symposium title in the margin area.
-        Refer to ``put_logo_with_text`` function in PdfStampTools_ to create the overlay.
+        Refer to :ref:`note on first page overlay <note_fpo>` for more details.
     input_pdfs_dir : str
         Path to the input PDF directory. The PDF files should be named as ``{paper_id}.pdf``.
     output_pdfs_dir : str
         Path to the output PDF directory. The stamped PDF files will be saved in this directory.
         The filenames will be ``{session_code}{paper_order}.pdf``.
+
     encl : NumberEnclosure, optional
-        Page number enclosure, by default ``"en_dash"``. See :class:`.NumberEnclosure` in PdfStampTools_.
+        .. _enclosures:
+
+        Page number enclosure, by default ``"en_dash"``.
         The following options are available:
 
         ============= ==========================
@@ -97,6 +102,9 @@ def stamp_all_pdfs(
     .. literalinclude:: /py_examples/data.diff
         :caption: diff between data.json and data_with_pages.json
 
+    See Also
+    --------
+    .stamp_single_pdf: Stamp a single PDF file with the overlay.
     """
     with open(data_json, "r") as f:
         data = Sessions(json.load(f))
@@ -128,7 +136,7 @@ def stamp_single_pdf(
     first_page_overlay: str,
     encl: NumberEnclosure = "en_dash",
     page_start: int = 1,
-):
+) -> list[int]:
     """Stamp a single PDF file with the overlay.
 
     Parameters
@@ -139,15 +147,28 @@ def stamp_single_pdf(
         Path to the output PDF file.
     first_page_overlay : str
         Path to the overlay PDF file for the first page.
+        The overlay will only have the logo and the symposium title in the margin area.
+        Refer to :ref:`note on first page overlay <note_fpo>` for more details.
     encl : NumberEnclosure, optional
         Number enclosure type, by default "en_dash".
+        See :ref:`encl <enclosures>` of :func:`.stamp_all_pdfs` for more details.
     page_start : int, optional
         Starting page number, by default 1.
 
     Returns
     -------
-    _type_
-        _description_
+    list[int]
+        List of two integers, representing the start and end page numbers.
+
+    Examples
+    --------
+    Here is an example of how to stamp a single PDF file.
+
+    .. literalinclude:: /py_examples/ex_stamp_single_pdf.py
+
+    See Also
+    --------
+    .stamp_all_pdfs: Stamp overlays and page numbers on all PDFs in the input directory according to the data JSON.
     """
     with open(first_page_overlay, "rb") as f:
         page_start_next = stamp_pdf(
@@ -160,7 +181,7 @@ def stamp_single_pdf(
         return [page_start, page_start_next - 1]
 
 
-def merge_all_pdfs_in_dir(
+def merge_all_pdfs(
     data_json: str,
     input_pdf_dir: str,
     output_pdf: str,
@@ -171,16 +192,23 @@ def merge_all_pdfs_in_dir(
     Parameters
     ----------
     data_json : str
-        Path to the data JSON file.
+        Path to the data JSON file. The JSON file should have the structure of :class:`.Session`.
+        The order of the PDFs will be determined by the order of the papers in the JSON file.
     input_pdf_dir : str
-        Path to the input PDF directory.
-    output_pdf : str
-        Path to the output PDF file.
+        Path to the input PDF directory. The PDF files should be named as ``{session_code}{paper_order}.pdf``.
+    output_filename : str
+        Filename of the merged PDF file.
     verbose : bool, optional
         Whether to print the progress, by default False.
+
+    Examples
+    --------
+    Here is an example of how to merge all PDFs in the input directory.
+
+    .. literalinclude:: /py_examples/ex_merge_all_pdfs.py
     """
     with open(data_json, "r") as f:
-        data = [Session(**s) for s in json.load(f)]
+        data = Sessions(json.load(f))
 
     merger = PdfMerger()
     for session in data:
