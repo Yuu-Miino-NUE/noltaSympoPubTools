@@ -30,7 +30,10 @@
                     "country": "United States",
                     "email": "john@example.com"
                 },
-                "pages": null,
+                "pages": [
+                    1,
+                    1
+                ],
                 "abstract": "This is an abstract.",
                 "keywords": [
                     "keyword1",

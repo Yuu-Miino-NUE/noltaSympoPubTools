@@ -27,6 +27,7 @@ __all__ = [
     "CommonInfo",
     "ReviseItem",
     "Session",
+    "Sessions",
     "SSOrganizer",
     "Person",
     "Paper",
@@ -563,6 +564,44 @@ class Session(BaseModel):
     start_time: datetime
     end_time: datetime
     papers: list[Paper] = []
+
+
+class Sessions:
+    """List of sessions.
+
+    Parameters
+    ----------
+    sessions : list[dict]
+        List of session dictionaries. Each dictionary should have the structure of :class:`.Session`.
+        Generally, the data will be loaded from a JSON file.
+    """
+
+    def __init__(self, sessions: list[dict]) -> None:
+        self._sessions = [Session(**s) for s in sessions]
+
+    def __getitem__(self, index: int) -> Session:
+        return self._sessions[index]
+
+    def dump_json(self, filename: str, verbose: bool = False, **kwargs) -> None:
+        """Save sessions to JSON file.
+
+        Parameters
+        ----------
+        sessions : list[Session]
+            List of Session objects.
+        filename : str
+            Output JSON filename.
+        verbose : bool, optional
+            Print session counts, by default False.
+        """
+        kwargs = {
+            "indent": 4,
+            "cls": JsonEncoder,
+            "ensure_ascii": False,
+        } | kwargs
+        json.dump(obj=self._sessions, fp=open(filename, "w"), **kwargs)
+        if verbose:
+            print("Session counts:", len(self._sessions))
 
 
 class ReviseItem(BaseModel):

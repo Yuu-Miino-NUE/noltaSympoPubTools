@@ -35,6 +35,7 @@ add_module_names = False
 
 html_theme = "sphinx_book_theme"
 html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 
 html_theme_options = {
     "repository_url": "https://github.com/Yuu-Miino-NUE/noltaSympoPubTools",

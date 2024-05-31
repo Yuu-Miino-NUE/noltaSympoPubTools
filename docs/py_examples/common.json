@@ -1,25 +1,25 @@
 {
-    "conf_abbr": "NOLTA",
+    "conf_abbr": "EXSPT",
     "year": 2023,
-    "event_name": "2023 International Symposium on Nonlinear Theory and Its Applications",
+    "event_name": "2023 International Symposium on Examples of the SympoPubTools",
     "event_date": [
         "2023-09-26",
         "2023-09-29"
     ],
     "event_city": [
-        "Catania, Italy"
+        "Tokyo, Japan"
     ],
     "event_venue": [
-        "Cittadella Campus of the University of Catania"
+        "Examples University"
     ],
     "event_web_url": "https://www.nolta2023.org/",
     "cooperators": [
-        ["IEICE"],
-        ["IEICE NLP", "IEICE CCS", "Italian Society for Chaos and Complexity"],
-        ["SCAT"],
+        ["EXAMPLE"],
+        ["EXAMPLE NLP", "EXAMPLE CCS", "Example Society for Chaos and Complexity"],
+        ["EX EX"],
         [""]
     ],
-    "publication": "Proceedings of the 2023 International Symposium on Nonlinear Theory and Its Applications",
+    "publication": "Proceedings of the 2023 International Symposium on Examples of the SympoPubTools",
     "date_published": "2023-09-21",
-    "publisher": "IEICE"
+    "publisher": "EXAMPLE"
 }
