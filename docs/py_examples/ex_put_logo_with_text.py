@@ -2,7 +2,7 @@ from PdfStampTools import put_logo_with_text, mm
 
 with open("first_page_overlay.pdf", "wb") as f:
     put_logo_with_text(
-        f,
+        into=f,
         text_lines=[
             "2023 International Symposium on Examples of the SympoPubTools",
             "EXSPT2023, September 26-29, 2023, Tokyo, Japan",

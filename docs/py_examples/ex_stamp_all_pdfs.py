@@ -8,4 +8,7 @@ page_added_data = stamp_all_pdfs(
     verbose=True,
 )
 
-page_added_data.dump_json("data_with_pages.json", True)
+page_added_data.dump_json(
+    filename="data_with_pages.json",
+    verbose=True,
+)
