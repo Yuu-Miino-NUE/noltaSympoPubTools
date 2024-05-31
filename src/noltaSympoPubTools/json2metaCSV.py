@@ -83,6 +83,7 @@ def load_sessions(
     --------
     .MetaSession: Data class for session
     .MetadataList: List of metadata
+    .MetadataList.dump_csv: Dump metadata to CSV file
     .Session: Data class for session
     .SSOrganizer: Data class for session
     .CommonInfo: Data class for common information
@@ -181,6 +182,7 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
     --------
     .MetaArticle: Data class for paper
     .MetadataList: List of metadata
+    .MetadataList.dump_csv: Dump metadata to CSV file
     .Session: Data class for session
     .Award: Data class for awards
 
@@ -264,6 +266,7 @@ def load_common(common_json: str) -> MetaCommon:
     --------
     .MetaCommon: Data class for common information
     .Metadata: Base class for metadata
+    .Metadata.dump_csv: Dump metadata to CSV file
     """
 
     with open(common_json, "r") as f:
