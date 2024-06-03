@@ -4,6 +4,7 @@ import numpy as np
 import json
 from datetime import datetime, timedelta, timezone
 from pandas import DataFrame, read_excel, read_csv
+from pydantic import TypeAdapter
 
 from .models import JsonEncoder, Session, Paper, Person
 
@@ -62,7 +63,8 @@ def update_sessions(data_json: str, update_json: str):
         If session not found.
     """
     with open(data_json) as f:
-        sessions = [Session(**s) for s in json.load(f)]
+        ta = TypeAdapter(list[Session])
+        sessions = ta.validate_json(json.load(f))
 
     with open(update_json) as f:
         update_dict = json.load(f)
@@ -88,7 +90,9 @@ def update_sessions(data_json: str, update_json: str):
                         f"Session not found: {ud['category']} {ud['category_order']} ({update_json} / {data_json})"
                     )
 
-    save_sessions(sessions, data_json, True)
+    with open(data_json, "w") as f:
+        ta.dump_json(sessions)
+    # save_sessions(sessions, data_json, True)
 
 
 def save_sessions(

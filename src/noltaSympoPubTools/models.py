@@ -5,7 +5,8 @@
 
 """
 
-from typing import Generic, Literal, TypeAlias, TypeVar, Sequence
+from collections.abc import Callable
+from typing import Any, Generic, Literal, TypeAlias, TypeVar, Sequence
 from datetime import date, datetime, time
 import json
 import csv
@@ -26,6 +27,8 @@ __all__ = [
     "Award",
     "CommonInfo",
     "ReviseItem",
+    "ReviseItems",
+    "BaseModelList",
     "Session",
     "Sessions",
     "SSOrganizer",
@@ -566,7 +569,51 @@ class Session(BaseModel):
     papers: list[Paper] = []
 
 
-class Sessions:
+class BaseModelList(Generic[T]):
+    """List of basemodels.
+
+    Parameters
+    ----------
+    data_list : list[dict]
+        List of basemodel dictionaries. Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .Sessions: List of sessions
+    .ReviseItems: List of revise items
+    """
+
+    def __init__(self, data_list: list[T]) -> None:
+        self._data_list = data_list
+
+    def __getitem__(self, index: int) -> T:
+        return self._data_list[index]
+
+    def dump_json(self, filename: str, verbose: bool = False, **kwargs) -> None:
+        """Save data to JSON file.
+
+        Parameters
+        ----------
+        filename : str
+            Output JSON filename.
+        verbose : bool, optional
+            Print detail, by default False.
+        kwargs : Any
+            Additional keyword arguments for :func:`json.dump`.
+        """
+        kwargs = {
+            "indent": 4,
+            "cls": JsonEncoder,
+            "ensure_ascii": False,
+        } | kwargs
+        json.dump(obj=self._data_list, fp=open(filename, "w"), **kwargs)
+        if verbose:
+            print("dump_json: Data counts:", len(self._data_list))
+            print("dump_json: Output filename:", filename)
+            print("dump_json: Data type:", type(self._data_list[0]))
+
+
+class Sessions(BaseModelList[Session]):
     """List of sessions.
 
     Parameters
@@ -578,30 +625,7 @@ class Sessions:
 
     def __init__(self, sessions: list[dict]) -> None:
         self._sessions = [Session(**s) for s in sessions]
-
-    def __getitem__(self, index: int) -> Session:
-        return self._sessions[index]
-
-    def dump_json(self, filename: str, verbose: bool = False, **kwargs) -> None:
-        """Save sessions to JSON file.
-
-        Parameters
-        ----------
-        sessions : list[Session]
-            List of Session objects.
-        filename : str
-            Output JSON filename.
-        verbose : bool, optional
-            Print session counts, by default False.
-        """
-        kwargs = {
-            "indent": 4,
-            "cls": JsonEncoder,
-            "ensure_ascii": False,
-        } | kwargs
-        json.dump(obj=self._sessions, fp=open(filename, "w"), **kwargs)
-        if verbose:
-            print("Session counts:", len(self._sessions))
+        super().__init__(self._sessions)
 
 
 class ReviseItem(BaseModel):
@@ -629,6 +653,21 @@ class ReviseItem(BaseModel):
     paper_id: int
     title: str
     contact: Person
+
+
+class ReviseItems(BaseModelList[ReviseItem]):
+    """List of :class:`.ReviseItem`.
+
+    Parameters
+    ----------
+    revise_items : list[dict]
+        List of revise item dictionaries. Each dictionary should have the structure of :class:`.ReviseItem`.
+        Generally, the data will be loaded from a JSON file.
+    """
+
+    def __init__(self, revise_items: list[dict]) -> None:
+        self._revise_items = [ReviseItem(**r) for r in revise_items]
+        super().__init__(self._revise_items)
 
 
 class JsonEncoder(json.JSONEncoder):
