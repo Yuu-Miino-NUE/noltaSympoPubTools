@@ -1,0 +1,12 @@
+ERR_KEY,ERR_MSG
+ORCID_NO_IDS,"Some/all of the authors have not provided their ORCID iDs. Ensure that all authors ``must'' prepare the iDs and insert them in the correct format. The format includes the ORCID icon images and the hyperlinks to the personal page on the ORCID website, not only the ORCID iDs."
+ORCID_NO_LINK,"Some/all of the authors have not inserted the hyperlink of the ORCID iDs."
+ORCID_INVALID_ICON,"Some/all of the authors have not included the ORCID icon images with their ORCID iDs. All ORCID iDs must be referred to the correct format."
+ORCID_INVALID_FORMAT,"All ORCID iDs are not in the correct format. They must be located at the end of the first column as a footnote; notice that they should not use the margin space when the authors update the paper. Our guidelines also request only the ORCID iDs in the manuscript but not their URLs. Instead of directly writing the URLs, please only insert the ORCID iDs with the URL hyperlinks."
+ONE_COLUMN,"The manuscript must be in two columns."
+CC_OVERLAP,"All manuscripts must keep the margins. The bottom margin of the manuscript is insufficient. This should cause some overlappings with publication stamps like page numbers, etc."
+MS_NO_A4_FORMAT,"This manuscript is not A4 format. Please use the MS word template file in our official website."
+LATEX_NO_A4_FORMAT,"This manuscript is not A4 format. Please use the LaTeX style file in our official website."
+OVERFLOW_MARGIN,"All manuscripts must keep the margins. The equation or figure in the manuscript has broken the margin. Please refer to the extra message for detail."
+ORCID_EXTRA_COMMA,"List of ORCID iDs include unnecessary comma and colon. Please check the LaTeX command usage for the iDs."
+ADOBE_OPEN_ERROR,"The list of ORCID iDs includes unnecessary pair of one comma and one colon. Please check the LaTeX command usage for the iDs."

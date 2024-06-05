@@ -1,54 +1,94 @@
 import os, json
 import pandas as pd
 import numpy as np
+import warnings
 
 from .models import ReviseItem, ReviseItemList, SessionList
 
 __all__ = [
-    "revise_csv2json",
-    "get_revised_ids",
-    "get_all_ids",
-    "get_records_by_ids",
+    "err_sheet2dict",
+    "revise_sheet2json",
+    "get_ritems_by_pids",
     "show_revise_summary",
 ]
 
 
-def _load_err_msg_csv(input_csv: str):
-    df = pd.read_csv(input_csv)
-    df = df.replace(np.nan, None)  # convert NaN to None
+def err_sheet2dict(err_sheet: str) -> dict[str, str]:
+    """Convert error sheet to dictionary.
 
+    Parameters
+    ----------
+    err_sheet : str
+        Input sheet file path. The sheet should have the columns 'ERR_KEY' and 'ERR_MSG',
+        which are error keys and messages, respectively.
+        File format should be CSV or Excel.
+
+    Returns
+    -------
+    dict[str, str]
+        Dictionary of error keys and messages.
+
+    Examples
+    --------
+    The error sheet should have the following structure.
+
+    .. literalinclude:: /py_examples/err_msg.csv
+        :caption: err_msg.csv
+
+    Here is an example of how to use the :func:`err_sheet2dict` function.
+
+    .. literalinclude:: /py_examples/ex_err_sheet2dict.py
+
+    Created dictionary will be used in :func:`revise_sheet2json`.
+
+    See Also
+    --------
+    .ReviseItem: Data class for revision request
+    .ReviseItemList: List of revision requests
+    .SessionList: List of session information
+    .revise_sheet2json: Convert CSV data to ReviseItemList
+    """
+
+    if err_sheet.endswith(".csv"):
+        df = pd.read_csv(err_sheet)
+    elif err_sheet.endswith(".xlsx"):
+        df = pd.read_excel(err_sheet)
+    else:
+        raise ValueError("Input file should be a CSV or Excel file.")
+
+    df = df.replace(np.nan, None)  # convert NaN to None
     record_dicts = df.to_dict(orient="records")
     ret = {d["ERR_KEY"]: d["ERR_MSG"] for d in record_dicts}
     return ret
 
 
-def revise_csv2json(
-    input_csv: str,
-    err_msg_csv: str,
+def revise_sheet2json(
+    revise_sheet: str,
+    err_dict: dict[str, str],
     data_json: str,
-    output_json: str,
-):
-    """Convert CSV data to JSON data for revision request.
+) -> ReviseItemList:
+    """Convert spreadsheet data to ReviseItemList.
 
     Parameters
     ----------
-    input_csv : str
-        Input CSV file path.
-    err_msg_csv : str
-        Error message CSV file path.
+    revise_sheet : str
+        Input sheet file path. The sheet should have the columns 'PDF_NAME', 'EXTRA_COMMENTS', and error keys.
+        File format should be CSV or Excel.
+    err_msg_dict : dict[str, str]
+        Error message dictionary. The dictionary should have error keys as keys and error messages as values.
     data_json : str
-        Data JSON file path.
-    output_json : str
-        Output JSON file path.
+        Data JSON file path. The JSON file should have the structure of :class:`.Session`.
 
-    Raises
-    ------
-    ValueError
-        If a paper is not found in the data JSON file.
+    See Also
+    --------
+    .ReviseItem: Data class for revision request
+    .ReviseItemList: List of revision requests
+    .SessionList: List of session information
     """
-    ERROR_MSG = _load_err_msg_csv(err_msg_csv)
-
-    df = pd.read_csv(input_csv)
+    if revise_sheet.endswith(".csv"):
+        df = pd.read_csv(revise_sheet)
+    elif revise_sheet.endswith(".xlsx"):
+        df = pd.read_excel(revise_sheet)
     df = df.replace(np.nan, None)  # convert NaN to None
     record_dicts = df.to_dict(orient="records")
 
@@ -57,40 +97,42 @@ def revise_csv2json(
 
     revise_items = ReviseItemList()
     for d in record_dicts:
-        kwargs = {"pdfname": d["PDF_NAME"], "ext_msg": d["EXTRA_COMMENTS"]}
+        try:
+            kwargs = {"pdf_name": d["PDF_NAME"]}
+        except KeyError:
+            raise ValueError(
+                f"Columns 'PDF_NAME' and 'EXTRA_COMMENTS' are required in {revise_sheet}"
+            )
 
-        # Load error data from CSV
-        errors: list[str] = []
+        # Load error data
+        kwargs["errors"] = []
         for k, v in d.items():
-            if k in ERROR_MSG and v == 1:
-                errors.append(ERROR_MSG[k])
+            if k in err_dict and v == 1:
+                kwargs["errors"].append(err_dict[k])
+            elif k == "EXTRA_COMMENTS":
+                kwargs["extra_comments"] = v
+            else:
+                warnings.warn(f"Unknown column {k} in {revise_sheet}")
 
         # Find paper in data JSON
-        basename = d["PDF_NAME"].split(".")[0]
+        basename = kwargs["pdf_name"].split(".")[0]
         code, order = basename[0:-1], int(basename[-1])
         try:
             idx = [s.code for s in sessions].index(code)
             idx2 = [p.order for p in sessions[idx].papers].index(order)
             kwargs |= {
-                "paper_id": sessions[idx].papers[idx2].id,
-                "title": sessions[idx].papers[idx2].title,
-                "contact": sessions[idx].papers[idx2].contact,
+                k: getattr(sessions[idx].papers[idx2], k)
+                for k in ["paper_id", "title", "contact"]
             }
         except ValueError:
-            raise ValueError(f"Paper not found in {data_json} for {d['PDF_NAME']}")
+            raise ValueError(f"Paper not found in {data_json} for {kwargs['pdf_name']}")
 
-        kwargs["errors"] = errors
+        revise_items.append(ReviseItem(**kwargs))
 
-        try:
-            revise_items.append(ReviseItem(**kwargs))
-        except Exception as e:
-            print(kwargs)
-            raise e
-
-    revise_items.dump_json(output_json)
+    return revise_items
 
 
-def get_revised_ids(revised_pdfs_dir: str) -> set[str]:
+def _get_revised_ids(revised_pdfs_dir: str) -> set[int]:
     """Get the IDs of revised papers from the directory of revised PDFs.
 
     Parameters
@@ -100,23 +142,23 @@ def get_revised_ids(revised_pdfs_dir: str) -> set[str]:
 
     Returns
     -------
-    set[str]
+    set[int]
         Set of paper IDs.
     """
-    revised_ids: set[str] = set()
+    revised_ids: set[int] = set()
     for _, _, files in os.walk(revised_pdfs_dir):
         for file in files:
             if file.endswith(".pdf"):
-                revised_ids.add(str(file[:-4]))
+                revised_ids.add(int(file[:-4]))
     return revised_ids
 
 
-def get_all_ids(input_json: str) -> set[str]:
+def _get_all_pids(revise_json: str) -> set[int]:
     """Get all paper IDs from the JSON file.
 
     Parameters
     ----------
-    input_json : str
+    revise_json : str
         Path to the JSON file.
 
     Returns
@@ -124,22 +166,22 @@ def get_all_ids(input_json: str) -> set[str]:
     set[str]
         Set of paper IDs.
     """
-    all_ids: set[str] = set()
-    with open(input_json) as f:
+    all_ids: set[int] = set()
+    with open(revise_json) as f:
         data = ReviseItemList(json.load(f))
         for item in data:
-            all_ids.add(str(item.paper_id))
+            all_ids.add(item.paper_id)
     return all_ids
 
 
-def get_records_by_ids(input_json: str, ids: set[str]) -> ReviseItemList:
+def get_ritems_by_pids(revise_json: str, pids: set[int]) -> ReviseItemList:
     """Get records by paper IDs.
 
     Parameters
     ----------
-    input_json : str
+    revise_json : str
         Path to the JSON file.
-    ids : set[str]
+    ids : set[int]
         Set of paper IDs.
 
     Returns
@@ -152,13 +194,13 @@ def get_records_by_ids(input_json: str, ids: set[str]) -> ReviseItemList:
     ValueError
         If a paper ID is not found in the JSON file.
     """
-    ret = ReviseItemList()
-    with open(input_json) as f:
+    with open(revise_json) as f:
         data = ReviseItemList(json.load(f))
 
-    for id in ids:
+    ret = ReviseItemList()
+    for id in pids:
         try:
-            idx = [item.paper_id for item in data].index(int(id))
+            idx = [item.paper_id for item in data].index(id)
             ret.append(data[idx])
         except ValueError:
             raise ValueError(f"Paper ID {id} not found in the JSON file.")
@@ -166,20 +208,21 @@ def get_records_by_ids(input_json: str, ids: set[str]) -> ReviseItemList:
     return ret
 
 
-def show_revise_summary(
-    all_ids: set[str], revised_ids: set[str], missing_ids: set[str]
-):
+def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
     """Show the summary of revised papers.
 
     Parameters
     ----------
-    all_ids : set[str]
-        Set of all paper IDs.
-    revised_ids : set[str]
-        Set of revised paper IDs.
-    missing_ids : set[str]
-        Set of missing paper IDs.
+    revise_json : str
+        Path to the JSON file. The JSON file should have the structure of :class:`.ReviseItemList`.
+    revised_pdfs_dir : str
+        Directory path containing revised PDFs. PDF file names should be the paper IDs.
     """
+
+    all_ids = _get_all_pids(revise_json)
+    revised_ids = _get_revised_ids(revised_pdfs_dir)
+    missing_ids = all_ids - revised_ids
+
     rate = len(revised_ids) / len(all_ids) * 100
     print(
         len(all_ids),

@@ -667,11 +667,11 @@ class ReviseItem(BaseModel):
 
     Parameters
     ----------
-    pdfname : str
+    pdf_name : str
         PDF file name.
     errors : list[str]
         List of errors.
-    ext_msg : str | None
+    extra_comments : str | None
         Extra message.
     paper_id : int
         Paper ID.
@@ -681,12 +681,12 @@ class ReviseItem(BaseModel):
         Contact information of the corresponding author.
     """
 
-    pdfname: str
+    pdf_name: str
     errors: list[str]
-    ext_msg: str | None
     paper_id: int
     title: str
     contact: Person
+    extra_comments: str | None = None
 
 
 class AwardList(BaseModelList[Award]):
