@@ -10,13 +10,14 @@ import json
 
 from .models import (
     MetaSession,
+    MetaSessionList,
     MetaArticle,
+    MetaArticleList,
     MetaCommon,
-    MetadataList,
     CommonInfo,
-    Award,
-    Session,
-    SSOrganizer,
+    AwardList,
+    SessionList,
+    SSOrganizerList,
 )
 
 __all__ = ["load_common", "load_articles", "load_sessions"]
@@ -24,7 +25,7 @@ __all__ = ["load_common", "load_articles", "load_sessions"]
 
 def load_sessions(
     data_json: str, ss_organizers_json: str, common_json: str
-) -> MetadataList:
+) -> MetaSessionList:
     """Load session information from JSON file.
 
     Parameters
@@ -40,7 +41,7 @@ def load_sessions(
 
     Returns
     -------
-    MetadataList
+    MetaSessionList
         List of session information, each of which is an instance of :class:`.MetaSession`.
 
     Examples
@@ -82,7 +83,7 @@ def load_sessions(
     See Also
     --------
     .MetaSession: Data class for session
-    .MetadataList: List of metadata
+    .MetaSessionList: List of session metadata
     .MetadataList.dump_csv: Dump metadata to CSV file
     .Session: Data class for session
     .SSOrganizer: Data class for session
@@ -90,17 +91,17 @@ def load_sessions(
     """
 
     with open(data_json, "r") as f:
-        s_data = [Session(**s) for s in json.load(f)]
+        s_data = SessionList(json.load(f))
 
     with open(ss_organizers_json, "r") as f:
-        ss_org_data = [SSOrganizer(**sso) for sso in json.load(f)]
+        ss_org_data = SSOrganizerList(json.load(f))
 
     with open(common_json, "r") as f:
         common_data = CommonInfo(**json.load(f))
         cities = common_data.event_city
         venues = common_data.event_venue
 
-    sessions: list[MetaSession] = []
+    sessions = MetaSessionList()
 
     for ss in s_data:
         if ss.category[0] != "s":
@@ -129,10 +130,10 @@ def load_sessions(
         )
         sessions.append(session)
 
-    return MetadataList(sessions)
+    return sessions
 
 
-def load_articles(data_json: str, award_json: str) -> MetadataList:
+def load_articles(data_json: str, award_json: str) -> MetaArticleList:
     """Load article information from JSON file.
 
     Parameters
@@ -144,7 +145,7 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
 
     Returns
     -------
-    MetadataList
+    MetaArticleList
         List containig article information, each of which is an instance of :class:`.MetaArticle`.
 
     Examples
@@ -181,7 +182,7 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
     See Also
     --------
     .MetaArticle: Data class for paper
-    .MetadataList: List of metadata
+    .MetaArticleList: List of metadata
     .MetadataList.dump_csv: Dump metadata to CSV file
     .Session: Data class for session
     .Award: Data class for awards
@@ -189,12 +190,12 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
     """
 
     with open(data_json, "r") as f:
-        s_data = [Session(**s) for s in json.load(f)]
+        s_data = SessionList(json.load(f))
 
     with open(award_json, "r") as f:
-        a_data = [Award(**a) for a in json.load(f)]
+        a_data = AwardList(json.load(f))
 
-    papers: list[MetaArticle] = []
+    papers = MetaArticleList()
 
     for ss in s_data:
         for p in ss.papers:
@@ -222,7 +223,7 @@ def load_articles(data_json: str, award_json: str) -> MetadataList:
             )
             papers.append(paper)
 
-    return MetadataList(papers)
+    return papers
 
 
 def load_common(common_json: str) -> MetaCommon:

@@ -28,7 +28,7 @@ import json, os
 from pypdf import PdfMerger
 
 from PdfStampTools import stamp_pdf, NumberEnclosure
-from .models import Session, Sessions
+from .models import Session, SessionList
 
 __all__ = ["stamp_all_pdfs", "stamp_single_pdf", "merge_all_pdfs"]
 
@@ -40,7 +40,7 @@ def stamp_all_pdfs(
     output_pdfs_dir: str,
     encl: NumberEnclosure = "en_dash",
     verbose: bool = False,
-) -> Sessions:
+) -> SessionList:
     """Stamp overlays and page numbers on all PDFs in the input directory according to the data JSON.
 
     Parameters
@@ -80,8 +80,8 @@ def stamp_all_pdfs(
 
     Returns
     -------
-    Sessions
-        :class:`.Sessions` object, containing the updated data.
+    SessionList
+        :class:`.SessionList` object, containing the updated data.
         The page numbers of the papers will be updated.
 
     Examples
@@ -97,7 +97,7 @@ def stamp_all_pdfs(
         :width: 100%
         :align: center
 
-    Using :meth:`.Sessions.dump_json`, the updated data can be saved to the JSON file.
+    Using :meth:`.SessionList.dump_json`, the updated data can be saved to the JSON file.
 
     .. literalinclude:: /py_examples/data.diff
         :caption: diff between data.json and data_with_pages.json
@@ -107,7 +107,7 @@ def stamp_all_pdfs(
     .stamp_single_pdf: Stamp a single PDF file with the overlay.
     """
     with open(data_json, "r") as f:
-        data = Sessions(json.load(f))
+        data = SessionList(json.load(f))
 
     with open(first_page_overlay, "rb") as f:
         page_start = 1
@@ -208,7 +208,7 @@ def merge_all_pdfs(
     .. literalinclude:: /py_examples/ex_merge_all_pdfs.py
     """
     with open(data_json, "r") as f:
-        data = Sessions(json.load(f))
+        data = SessionList(json.load(f))
 
     merger = PdfMerger()
     for session in data:

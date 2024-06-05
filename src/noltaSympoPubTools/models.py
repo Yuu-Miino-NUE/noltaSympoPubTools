@@ -5,8 +5,7 @@
 
 """
 
-from collections.abc import Callable
-from typing import Any, Generic, Literal, TypeAlias, TypeVar, Sequence
+from typing import Generic, Literal, TypeAlias, TypeVar, Sequence
 from datetime import date, datetime, time
 import json
 import csv
@@ -15,23 +14,27 @@ import re
 from pydantic import BaseModel
 
 T = TypeVar("T")
+TBM = TypeVar("TBM", bound=BaseModel)
 Comment: TypeAlias = Literal["", "#"]
 
 __all__ = [
     "MetaPerson",
     "MetaSession",
+    "MetaSessionList",
     "MetaArticle",
+    "MetaArticleList",
     "MetaCommon",
     "Metadata",
     "MetadataList",
     "Award",
     "CommonInfo",
     "ReviseItem",
-    "ReviseItems",
+    "ReviseItemList",
     "BaseModelList",
     "Session",
-    "Sessions",
+    "SessionList",
     "SSOrganizer",
+    "SSOrganizerList",
     "Person",
     "Paper",
 ]
@@ -59,7 +62,9 @@ class Award(BaseModel):
     ----
     IEICE における 国際会議メタデータ仕様書_
 
-
+    See Also
+    --------
+    .AwardList: List of awards
     """
 
     id: str
@@ -240,14 +245,14 @@ class Metadata:
         _dump_metadata_csv(self, filename, template)
 
 
-class MetadataList:
+TMD = TypeVar("TMD", bound=Metadata)
+
+
+class MetadataList(list[TMD], Generic[TMD]):
     """List of metadata."""
 
-    def __init__(self, data_list: Sequence[Metadata]) -> None:
+    def __init__(self, data_list: list[TMD]) -> None:
         self._lst = data_list
-
-    def __getitem__(self, index: int) -> Metadata:
-        return self._lst[index]
 
     def dump_csv(self, filename: str, template: str) -> None:
         """Save metadata as CSV file.
@@ -262,8 +267,8 @@ class MetadataList:
 
         See Also
         --------
-        .MetaSession: Data class for session
-        .MetaArticle: Data class for paper
+        .MetaSessionList: List of session information
+        .MetaArticleList: List of paper information
         .load_sessions: Load session information from JSON file
         .load_articles: Load paper information from JSON file
         """
@@ -316,6 +321,10 @@ class MetaSession(Metadata):
         Cities.
     venues : list[str]
         Venues.
+
+    See Also
+    --------
+    MetaSessionList : List of session information
     """
 
     def __init__(
@@ -343,11 +352,6 @@ class MetaSession(Metadata):
         self.chair_affils: AtList[Str] = AtList([Str(ca) for ca in chair_affils])  # 8
         self.cities = Strs([Str(c) for c in cities])  # 9
         self.venues = Strs([Str(v) for v in venues])  # 10
-
-
-class MetaSessions(MetadataList):
-    def __init__(self, data: Sequence[MetaSession]) -> None:
-        super().__init__(data)
 
 
 class Text:
@@ -391,6 +395,10 @@ class MetaArticle(Metadata):
         Authors.
     affils : list[str]
         Affiliations of authors.
+
+    See Also
+    --------
+    MetaArticleList : List of paper information
     """
 
     def __init__(
@@ -426,6 +434,34 @@ class MetaArticle(Metadata):
             [MetaPerson(a) for a in authors]
         )  # 12
         self.affils: AtList[Str] = AtList([Str(a) for a in affils])  # 13
+
+
+class MetaSessionList(MetadataList[MetaSession]):
+    """List of session information in the context of the Metadata CSV.
+
+    Parameters
+    ----------
+    sessions : list[dict]
+        List of session dictionaries. Each dictionary should have the structure of :class:`.MetaSession`.
+        Generally, the data will be loaded from a JSON file.
+    """
+
+    def __init__(self, sessions: list[dict] = []) -> None:
+        super().__init__([MetaSession(**s) for s in sessions])
+
+
+class MetaArticleList(MetadataList[MetaArticle]):
+    """List of paper information in the context of the Metadata CSV.
+
+    Parameters
+    ----------
+    articles : list[dict]
+        List of paper dictionaries. Each dictionary should have the structure of :class:`.MetaArticle`.
+        Generally, the data will be loaded from a JSON file.
+    """
+
+    def __init__(self, articles: list[dict] = []) -> None:
+        super().__init__([MetaArticle(**a) for a in articles])
 
 
 class MetaCommon(Metadata):
@@ -569,7 +605,7 @@ class Session(BaseModel):
     papers: list[Paper] = []
 
 
-class BaseModelList(Generic[T]):
+class BaseModelList(list[TBM], Generic[TBM]):
     """List of basemodels.
 
     Parameters
@@ -579,15 +615,14 @@ class BaseModelList(Generic[T]):
 
     See Also
     --------
-    .Sessions: List of sessions
-    .ReviseItems: List of revise items
+    .AwardList: List of awards
+    .ReviseItemList: List of revise items
+    .SessionList: List of sessions
+    .SSOrganizerList: List of session organizers
     """
 
-    def __init__(self, data_list: list[T]) -> None:
+    def __init__(self, data_list: list[TBM] = []) -> None:
         self._data_list = data_list
-
-    def __getitem__(self, index: int) -> T:
-        return self._data_list[index]
 
     def dump_json(self, filename: str, verbose: bool = False, **kwargs) -> None:
         """Save data to JSON file.
@@ -613,7 +648,7 @@ class BaseModelList(Generic[T]):
             print("dump_json: Data type:", type(self._data_list[0]))
 
 
-class Sessions(BaseModelList[Session]):
+class SessionList(BaseModelList[Session]):
     """List of sessions.
 
     Parameters
@@ -623,9 +658,8 @@ class Sessions(BaseModelList[Session]):
         Generally, the data will be loaded from a JSON file.
     """
 
-    def __init__(self, sessions: list[dict]) -> None:
-        self._sessions = [Session(**s) for s in sessions]
-        super().__init__(self._sessions)
+    def __init__(self, sessions: list[dict] = []) -> None:
+        super().__init__([Session(**s) for s in sessions])
 
 
 class ReviseItem(BaseModel):
@@ -655,7 +689,21 @@ class ReviseItem(BaseModel):
     contact: Person
 
 
-class ReviseItems(BaseModelList[ReviseItem]):
+class AwardList(BaseModelList[Award]):
+    """List of awards.
+
+    Parameters
+    ----------
+    awards : list[dict]
+        List of award dictionaries. Each dictionary should have the structure of :class:`.Award`.
+        Generally, the data will be loaded from a JSON file.
+    """
+
+    def __init__(self, awards: list[dict] = []) -> None:
+        super().__init__([Award(**a) for a in awards])
+
+
+class ReviseItemList(BaseModelList[ReviseItem]):
     """List of :class:`.ReviseItem`.
 
     Parameters
@@ -665,7 +713,7 @@ class ReviseItems(BaseModelList[ReviseItem]):
         Generally, the data will be loaded from a JSON file.
     """
 
-    def __init__(self, revise_items: list[dict]) -> None:
+    def __init__(self, revise_items: list[dict] = []) -> None:
         self._revise_items = [ReviseItem(**r) for r in revise_items]
         super().__init__(self._revise_items)
 
@@ -714,8 +762,26 @@ class SSOrganizer(BaseModel):
     .. literalinclude:: /py_examples/ss_organizers.json
         :caption: ss_organizers.json
         :language: json
+
+    See Also
+    --------
+    .SSOrganizerList: List of session organizers
     """
 
     category: tuple
     title: str
     organizers: list[Person]
+
+
+class SSOrganizerList(BaseModelList[SSOrganizer]):
+    """List of session organizers.
+
+    Parameters
+    ----------
+    ss_organizers : list[dict]
+        List of session organizer dictionaries. Each dictionary should have the structure of :class:`.SSOrganizer`.
+        Generally, the data will be loaded from a JSON file.
+    """
+
+    def __init__(self, ss_organizers: list[dict] = []) -> None:
+        super().__init__([SSOrganizer(**s) for s in ss_organizers])

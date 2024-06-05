@@ -2,7 +2,7 @@ import os, json
 import pandas as pd
 import numpy as np
 
-from .models import ReviseItem, JsonEncoder, Session
+from .models import ReviseItem, ReviseItemList, SessionList
 
 __all__ = [
     "revise_csv2json",
@@ -11,20 +11,6 @@ __all__ = [
     "get_records_by_ids",
     "show_revise_summary",
 ]
-
-
-def save_items(items: list[ReviseItem], output_json: str):
-    """Save ReviseItem objects to a JSON file.
-
-    Parameters
-    ----------
-    items : list[ReviseItem]
-        List of ReviseItem objects.
-    output_json : str
-        Output JSON file path.
-    """
-    with open(output_json, "w") as f:
-        json.dump(items, f, indent=4, ensure_ascii=False, cls=JsonEncoder)
 
 
 def _load_err_msg_csv(input_csv: str):
@@ -36,19 +22,24 @@ def _load_err_msg_csv(input_csv: str):
     return ret
 
 
-def revise_csv2json(input_csv: str, data_json: str, output_json: str, err_msg_csv: str):
+def revise_csv2json(
+    input_csv: str,
+    err_msg_csv: str,
+    data_json: str,
+    output_json: str,
+):
     """Convert CSV data to JSON data for revision request.
 
     Parameters
     ----------
     input_csv : str
         Input CSV file path.
+    err_msg_csv : str
+        Error message CSV file path.
     data_json : str
         Data JSON file path.
     output_json : str
         Output JSON file path.
-    err_msg_csv : str
-        Error message CSV file path.
 
     Raises
     ------
@@ -62,14 +53,14 @@ def revise_csv2json(input_csv: str, data_json: str, output_json: str, err_msg_cs
     record_dicts = df.to_dict(orient="records")
 
     with open(data_json) as f:
-        sessions = [Session(**s) for s in json.load(f)]
+        sessions = SessionList(json.load(f))
 
-    revise_items = []
+    revise_items = ReviseItemList()
     for d in record_dicts:
         kwargs = {"pdfname": d["PDF_NAME"], "ext_msg": d["EXTRA_COMMENTS"]}
 
         # Load error data from CSV
-        errors = []
+        errors: list[str] = []
         for k, v in d.items():
             if k in ERROR_MSG and v == 1:
                 errors.append(ERROR_MSG[k])
@@ -96,7 +87,7 @@ def revise_csv2json(input_csv: str, data_json: str, output_json: str, err_msg_cs
             print(kwargs)
             raise e
 
-    save_items(revise_items, output_json)
+    revise_items.dump_json(output_json)
 
 
 def get_revised_ids(revised_pdfs_dir: str) -> set[str]:
@@ -112,12 +103,12 @@ def get_revised_ids(revised_pdfs_dir: str) -> set[str]:
     set[str]
         Set of paper IDs.
     """
-    revised_ids = []
+    revised_ids: set[str] = set()
     for _, _, files in os.walk(revised_pdfs_dir):
         for file in files:
             if file.endswith(".pdf"):
-                revised_ids.append(str(file[:-4]))
-    return set(revised_ids)
+                revised_ids.add(str(file[:-4]))
+    return revised_ids
 
 
 def get_all_ids(input_json: str) -> set[str]:
@@ -133,15 +124,15 @@ def get_all_ids(input_json: str) -> set[str]:
     set[str]
         Set of paper IDs.
     """
-    all_ids = []
+    all_ids: set[str] = set()
     with open(input_json) as f:
-        data = [ReviseItem(**r) for r in json.load(f)]
+        data = ReviseItemList(json.load(f))
         for item in data:
-            all_ids.append(str(item.paper_id))
-    return set(all_ids)
+            all_ids.add(str(item.paper_id))
+    return all_ids
 
 
-def get_records_by_ids(input_json: str, ids: set[str]) -> list[ReviseItem]:
+def get_records_by_ids(input_json: str, ids: set[str]) -> ReviseItemList:
     """Get records by paper IDs.
 
     Parameters
@@ -153,7 +144,7 @@ def get_records_by_ids(input_json: str, ids: set[str]) -> list[ReviseItem]:
 
     Returns
     -------
-    list[ReviseItem]
+    ReviseItemList
         List of records.
 
     Raises
@@ -161,9 +152,9 @@ def get_records_by_ids(input_json: str, ids: set[str]) -> list[ReviseItem]:
     ValueError
         If a paper ID is not found in the JSON file.
     """
-    ret = []
+    ret = ReviseItemList()
     with open(input_json) as f:
-        data = [ReviseItem(**r) for r in json.load(f)]
+        data = ReviseItemList(json.load(f))
 
     for id in ids:
         try:
