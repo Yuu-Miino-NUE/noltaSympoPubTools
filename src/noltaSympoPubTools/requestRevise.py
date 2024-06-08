@@ -8,7 +8,7 @@ from .models import ReviseItem, ReviseItemList, SessionList
 __all__ = [
     "err_sheet2dict",
     "revise_sheet2json",
-    "get_ritems_by_pids",
+    "get_ritems",
     "show_revise_summary",
 ]
 
@@ -78,6 +78,15 @@ def revise_sheet2json(
         Error message dictionary. The dictionary should have error keys as keys and error messages as values.
     data_json : str
         Data JSON file path. The JSON file should have the structure of :class:`.Session`.
+
+    Returns
+    -------
+    ReviseItemList
+        List of revision requests.
+
+    Examples
+    --------
+
 
     See Also
     --------
@@ -174,7 +183,7 @@ def _get_all_pids(revise_json: str) -> set[int]:
     return all_ids
 
 
-def get_ritems_by_pids(revise_json: str, pids: set[int]) -> ReviseItemList:
+def get_ritems(revise_json: str, pids: set[int]) -> ReviseItemList:
     """Get records by paper IDs.
 
     Parameters
