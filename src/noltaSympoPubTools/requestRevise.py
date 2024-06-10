@@ -224,7 +224,7 @@ def get_ritems(revise_json: str, pids: set[int]) -> ReviseItemList:
 
     .. literalinclude:: /py_examples/ex_get_ritems.py
 
-    The function will return a list of :class:`.ReviseItem` records.
+    The function will return a single :class:`.ReviseItem` object for the paper ID 6000.
 
     See Also
     --------
@@ -254,6 +254,31 @@ def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
         Path to the JSON file. The JSON file should have the structure of :class:`.ReviseItemList`.
     revised_pdfs_dir : str
         Directory path containing revised PDFs. PDF file names should be the paper IDs.
+
+    Examples
+    --------
+    Put the revised PDFs in the directory `revised_pdfs` and run the following script.
+
+    .. literalinclude:: /py_examples/ex_show_revise_summary.py
+
+    The script will print the summary of revised papers.
+
+    .. code-block:: none
+
+        1 = 0 + 1 (100.00 % revised)
+
+        - set()
+
+        + {6000}
+
+    - First line shows the total number of papers, the number of missing papers, the number of revised papers, and the revision rate.
+    - Second line shows the missing paper IDs.
+    - Third line shows the revised paper IDs.
+
+    See Also
+    --------
+    .ReviseItem: Data class for revision request
+    .ReviseItemList: List of revision requests
     """
 
     all_ids = _get_all_pids(revise_json)
