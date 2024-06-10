@@ -167,7 +167,7 @@ def _get_revised_ids(revised_pdfs_dir: str) -> set[int]:
     Parameters
     ----------
     revised_pdfs_dir : str
-        Directory path containing revised PDFs.
+        Directory path containing revised PDFs. PDF file names should be the paper IDs, not including the session code.
 
     Returns
     -------
@@ -204,12 +204,12 @@ def _get_all_pids(revise_json: str) -> set[int]:
 
 
 def get_ritems(revise_json: str, pids: set[int]) -> ReviseItemList:
-    """Get records by paper IDs.
+    """Get a single or multiple ReviseItem records from the JSON file.
 
     Parameters
     ----------
     revise_json : str
-        Path to the JSON file.
+        Path to the JSON file. The JSON file should have the structure of :class:`.ReviseItemList`.
     ids : set[int]
         Set of paper IDs.
 
@@ -218,10 +218,18 @@ def get_ritems(revise_json: str, pids: set[int]) -> ReviseItemList:
     ReviseItemList
         List of records.
 
-    Raises
-    ------
-    ValueError
-        If a paper ID is not found in the JSON file.
+    Examples
+    --------
+    Here is an example of how to use the :func:`get_ritems` function.
+
+    .. literalinclude:: /py_examples/ex_get_ritems.py
+
+    The function will return a list of :class:`.ReviseItem` records.
+
+    See Also
+    --------
+    .ReviseItem: Data class for revision request
+    .ReviseItemList: List of revision requests
     """
     with open(revise_json) as f:
         data = ReviseItemList(json.load(f))
