@@ -258,7 +258,7 @@ def compose_emails(input_json: str, subject: str, template_file: str) -> list[MI
         if d.contact.email is None:
             raise ValueError(f"Email address not found for {d.contact.name}")
 
-        body = _make_body(d.contact.name, d.title, d.errors, d.ext_msg, template)
+        body = _make_body(d.contact.name, d.title, d.errors, d.extra_comments, template)
         email = _make_email(d.contact.email, subject.format(id=d.paper_id), body)
         emails.append(email)
     return emails

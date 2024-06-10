@@ -251,9 +251,6 @@ TMD = TypeVar("TMD", bound=Metadata)
 class MetadataList(list[TMD], Generic[TMD]):
     """List of metadata."""
 
-    def __init__(self, data_list: list[TMD]) -> None:
-        self._lst = data_list
-
     def dump_csv(self, filename: str, template: str) -> None:
         """Save metadata as CSV file.
 
@@ -610,8 +607,8 @@ class BaseModelList(list[TBM], Generic[TBM]):
 
     Parameters
     ----------
-    data_list : list[dict]
-        List of basemodel dictionaries. Generally, the data will be loaded from a JSON file.
+    self : list[object]
+        List of BaseModel objects.
 
     See Also
     --------
@@ -620,9 +617,6 @@ class BaseModelList(list[TBM], Generic[TBM]):
     .SessionList: List of sessions
     .SSOrganizerList: List of session organizers
     """
-
-    def __init__(self, data_list: list[TBM] = []) -> None:
-        self._data_list = data_list
 
     def dump_json(self, filename: str, verbose: bool = False, **kwargs) -> None:
         """Save data to JSON file.
@@ -641,11 +635,11 @@ class BaseModelList(list[TBM], Generic[TBM]):
             "cls": JsonEncoder,
             "ensure_ascii": False,
         } | kwargs
-        json.dump(obj=self._data_list, fp=open(filename, "w"), **kwargs)
+        json.dump(obj=self, fp=open(filename, "w"), **kwargs)
         if verbose:
-            print("dump_json: Data counts:", len(self._data_list))
+            print("dump_json: Data counts:", len(self))
             print("dump_json: Output filename:", filename)
-            print("dump_json: Data type:", type(self._data_list[0]))
+            print("dump_json: Data type:", type(self[0]))
 
 
 class SessionList(BaseModelList[Session]):

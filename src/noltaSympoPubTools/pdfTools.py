@@ -28,7 +28,7 @@ import json, os
 from pypdf import PdfMerger
 
 from PdfStampTools import stamp_pdf, NumberEnclosure
-from .models import Session, SessionList
+from .models import SessionList
 
 __all__ = ["stamp_all_pdfs", "stamp_single_pdf", "merge_all_pdfs"]
 
@@ -136,7 +136,7 @@ def stamp_single_pdf(
     first_page_overlay: str,
     encl: NumberEnclosure = "en_dash",
     page_start: int = 1,
-) -> list[int]:
+) -> tuple[int, int]:
     """Stamp a single PDF file with the overlay.
 
     Parameters
@@ -178,7 +178,7 @@ def stamp_single_pdf(
             encl=encl,
             start_num=page_start,
         )
-        return [page_start, page_start_next - 1]
+        return (page_start, page_start_next - 1)
 
 
 def merge_all_pdfs(

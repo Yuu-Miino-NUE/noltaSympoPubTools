@@ -4,15 +4,13 @@ import numpy as np
 import json
 from datetime import datetime, timedelta, timezone
 from pandas import DataFrame, read_excel, read_csv
-from pydantic import TypeAdapter
 
-from .models import JsonEncoder, Session, Paper, Person
+from .models import Session, Paper, Person, SessionList
 
 __all__ = [
     "xlsx2json",
     "csv2json",
     "default_session_sort_func",
-    "save_sessions",
     "update_sessions",
 ]
 
@@ -36,7 +34,7 @@ def default_session_sort_func(s: Session) -> int:
     return int(code)
 
 
-def _update_papers(session: Session, papers: list[dict]):
+def _update_papers(session: Session, papers: list[dict]) -> Session:
     for p in papers:
         for idx_p, p_s in enumerate(session.papers):
             if p_s.id == p["id"]:
@@ -45,7 +43,7 @@ def _update_papers(session: Session, papers: list[dict]):
     return session
 
 
-def update_sessions(data_json: str, update_json: str):
+def update_sessions(data_json: str, update_json: str, verbose: bool = True) -> None:
     """Update session data with the update data.
 
     Parameters
@@ -63,8 +61,7 @@ def update_sessions(data_json: str, update_json: str):
         If session not found.
     """
     with open(data_json) as f:
-        ta = TypeAdapter(list[Session])
-        sessions = ta.validate_json(json.load(f))
+        sessions = SessionList(json.load(f))
 
     with open(update_json) as f:
         update_dict = json.load(f)
@@ -90,35 +87,7 @@ def update_sessions(data_json: str, update_json: str):
                         f"Session not found: {ud['category']} {ud['category_order']} ({update_json} / {data_json})"
                     )
 
-    with open(data_json, "w") as f:
-        ta.dump_json(sessions)
-    # save_sessions(sessions, data_json, True)
-
-
-def save_sessions(
-    sessions: list[Session],
-    output: str,
-    verbose: bool = False,
-):
-    """Save sessions to JSON file.
-
-    Parameters
-    ----------
-    sessions : list[Session]
-        List of Session objects.
-    output : str
-        Output JSON filename.
-    verbose : bool, optional
-        Print session counts, by default False.
-    """
-    kwargs = {
-        "indent": 4,
-        "cls": JsonEncoder,
-        "ensure_ascii": False,
-    }
-    json.dump(obj=sessions, fp=open(output, "w"), **kwargs)
-    if verbose:
-        print("Session counts:", len(sessions))
+    sessions.dump_json(data_json, verbose)
 
 
 def _df2json(
@@ -130,7 +99,7 @@ def _df2json(
     presentation_time_min: int,
     plenary_talk_time_min: int,
     sort_session: Callable,
-):
+) -> None:
     df = df[df["Decision"] == "Accept"]
     df = df.replace(np.nan, None)  # convert NaN to None
     record_dicts = df.to_dict(orient="records")
@@ -153,7 +122,7 @@ def _df2json(
         print(s.code, s.start_time, s.name)
 
     # Save to json file
-    save_sessions(sessions, output, True)
+    sessions.dump_json(output, True)
 
 
 def xlsx2json(
@@ -166,7 +135,7 @@ def xlsx2json(
     presentation_time_min=20,
     plenary_talk_time_min=60,
     sort_session: Callable = default_session_sort_func,
-):
+) -> None:
     """Convert Excel file to JSON file.
 
     Parameters
@@ -212,7 +181,7 @@ def csv2json(
     presentation_time_min: int = 20,
     plenary_talk_time_min: int = 60,
     sort_session: Callable = default_session_sort_func,
-):
+) -> None:
     """Convert CSV file to JSON file.
 
     Parameters
@@ -261,9 +230,9 @@ def _dict2sessions(
     tz_offset_h: int,
     presentation_time_min: int,
     plenary_talk_time_min: int,
-) -> list[Session]:
+) -> SessionList:
     # Initialization
-    sessions: list[Session] = []
+    sessions = SessionList()
 
     # Main loop
     for r in record_dicts:  # For each paper
