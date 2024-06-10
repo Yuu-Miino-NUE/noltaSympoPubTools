@@ -6,7 +6,7 @@ from .models import ReviseItem, ReviseItemList, SessionList
 
 __all__ = [
     "err_sheet2dict",
-    "revise_sheet2json",
+    "load_revise_sheet",
     "get_ritems",
     "show_revise_summary",
 ]
@@ -38,14 +38,14 @@ def err_sheet2dict(err_sheet: str) -> dict[str, str]:
 
     .. literalinclude:: /py_examples/ex_err_sheet2dict.py
 
-    Created dictionary will be used in :func:`revise_sheet2json`.
+    Created dictionary will be used in :func:`load_revise_sheet`.
 
     See Also
     --------
     .ReviseItem: Data class for revision request
     .ReviseItemList: List of revision requests
     .SessionList: List of session information
-    .revise_sheet2json: Convert CSV data to ReviseItemList
+    .load_revise_sheet: Convert CSV data to ReviseItemList
     """
 
     if err_sheet.endswith(".csv"):
@@ -61,10 +61,11 @@ def err_sheet2dict(err_sheet: str) -> dict[str, str]:
     return ret
 
 
-def revise_sheet2json(
+def load_revise_sheet(
     revise_sheet: str,
     err_dict: dict[str, str],
     data_json: str,
+    excel_sheet_name: str | None = None,
 ) -> ReviseItemList:
     """Convert spreadsheet data to ReviseItemList.
 
@@ -93,9 +94,9 @@ def revise_sheet2json(
 
     .. literalinclude:: /py_examples/data.json
 
-    Here is an example of how to use the :func:`revise_sheet2json` function.
+    Here is an example of how to use the :func:`load_revise_sheet` function.
 
-    .. literalinclude:: /py_examples/ex_revise_sheet2json.py
+    .. literalinclude:: /py_examples/ex_load_revise_sheet.py
 
     Refer to :func:`err_sheet2dict` for creating the error dictionary.
     The script will output a JSON file with the following structure.
@@ -117,7 +118,10 @@ def revise_sheet2json(
     if revise_sheet.endswith(".csv"):
         df = pd.read_csv(revise_sheet)
     elif revise_sheet.endswith(".xlsx"):
-        df = pd.read_excel(revise_sheet)
+        if excel_sheet_name is not None:
+            df = pd.read_excel(revise_sheet, sheet_name=excel_sheet_name)
+        else:
+            df = pd.read_excel(revise_sheet)
     df = df.replace(np.nan, None)  # convert NaN to None
     record_dicts = df.to_dict(orient="records")
 

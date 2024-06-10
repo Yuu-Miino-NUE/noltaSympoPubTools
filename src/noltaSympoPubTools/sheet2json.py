@@ -8,15 +8,14 @@ from pandas import DataFrame, read_excel, read_csv
 from .models import Session, Paper, Person, SessionList
 
 __all__ = [
-    "xlsx2json",
-    "csv2json",
+    "load_session_sheet",
     "default_session_sort_func",
     "update_sessions",
 ]
 
 
 def default_session_sort_func(s: Session) -> int:
-    """Default sort function for sessions.
+    """Default sort function for sessions. Sort by category and category_order. This function is compatible with the ``sort`` method of the list.
 
     Parameters
     ----------
@@ -34,13 +33,12 @@ def default_session_sort_func(s: Session) -> int:
     return int(code)
 
 
-def _update_papers(session: Session, papers: list[dict]) -> Session:
+def _update_papers(session: Session, papers: list[dict]):
     for p in papers:
         for idx_p, p_s in enumerate(session.papers):
             if p_s.id == p["id"]:
                 session.papers[idx_p] = p_s.model_copy(update=p)
                 break
-    return session
 
 
 def update_sessions(data_json: str, update_json: str, verbose: bool = True) -> None:
@@ -92,16 +90,16 @@ def update_sessions(data_json: str, update_json: str, verbose: bool = True) -> N
 
 def _df2json(
     df: DataFrame,
-    output: str,
     tz_offset_h: int,
-    author_max: int,
-    chair_max: int,
     presentation_time_min: int,
     plenary_talk_time_min: int,
     sort_session: Callable,
-) -> None:
+) -> SessionList:
     df = df[df["Decision"] == "Accept"]
     df = df.replace(np.nan, None)  # convert NaN to None
+    author_max = len([c for c in df.columns if c.startswith("First Name")])
+    chair_max = len([c for c in df.columns if c.startswith("Session Chair First")])
+
     record_dicts = df.to_dict(orient="records")
 
     sessions = _dict2sessions(
@@ -122,94 +120,104 @@ def _df2json(
         print(s.code, s.start_time, s.name)
 
     # Save to json file
-    sessions.dump_json(output, True)
+    return sessions
 
 
-def xlsx2json(
+def load_session_sheet(
     input: str,
-    sheet_name: str,
-    output: str,
     tz_offset_h: int,
-    author_max: int = 12,
-    chair_max: int = 2,
     presentation_time_min=20,
     plenary_talk_time_min=60,
+    excel_sheet_name: str | None = None,
     sort_session: Callable = default_session_sort_func,
-) -> None:
-    """Convert Excel file to JSON file.
+) -> SessionList:
+    """Convert Excel/CSV file to JSON file.
 
     Parameters
     ----------
     input : str
-        Input Excel filename.
-    sheet_name : str
+        Input Excel/CSV filename.
+    tz_offset_h : int
+        Timezone offset in hours.
+    presentation_time_min : int, optional
+        Presentation time in minutes, by default 20
+    plenary_talk_time_min : int, optional
+        Plenary talk time in minutes, by default 60
+    excel_sheet_name : str
         Sheet name in the Excel file.
-    output : str
-        Output JSON filename.
-    tz_offset_h : int
-        Timezone offset in hours.
-    author_max : int, optional
-        Max number of Authors, by default 12
-    chair_max : int, optional
-        Max number of Chair person, by default 2
-    presentation_time_min : int, optional
-        Presentation time in minutes, by default 20
-    plenary_talk_time_min : int, optional
-        Plenary talk time in minutes, by default 60
     sort_session : Callable, optional
-        Function to sort sessions, by default default_session_sort_funcs
+        Function to sort sessions, by default :func:`.default_session_sort_func`
+
+    Examples
+    --------
+    The ``input`` file will be an Excel/CSV file with the following columns:
+
+    .. list-table::
+        :header-rows: 1
+
+        * - Column Name
+          - Description
+        * - Paper ID
+          - Paper ID
+        * - Paper Title
+          - Paper Title
+        * - Paper Order
+          - Paper Order
+        * - Contact First
+          - Contact First Name
+        * - Contact Last
+          - Contact Last Name
+        * - Contact Organization
+          - Contact Organization
+        * - Contact Country
+          - Contact Country
+        * - Contact Email
+          - Contact Email
+        * - Abstract
+          - Abstract
+        * - Keywords
+          - Keywords
+        * - First Name{i}
+          - {i}-th Author's First Name
+        * - Last Name{i}
+          - {i}-th Author's Last Name
+        * - Organization{i}
+          - {i}-th Author's Organization
+        * - Country{i}
+          - {i}-th Author's Country
+        * - Session Name
+          - Session Name
+        * - Session Type
+          - Session Type
+        * - Session Code
+          - Session Code
+        * - Session Location
+          - Session Location
+        * - Session Start Time
+          - Session Start Time
+        * - Session End Time
+          - Session End Time
+        * - Session Chair First{i}
+          - {i}-th Chair's First Name
+        * - Session Chair Last{i}
+          - {i}-th Chair's Last Name
+        * - Session Chair Organization{i}
+          - {i}-th Chair's Organization
+
+
+    # TODO: Add example
+
     """
-    df = read_excel(input, sheet_name=sheet_name)
-    _df2json(
+    if input.endswith(".xlsx"):
+        if excel_sheet_name is not None:
+            df = read_excel(input, sheet_name=excel_sheet_name)
+        else:
+            df = read_excel(input)
+    else:
+        df = read_csv(input)
+    return _df2json(
         df=df,
-        output=output,
         tz_offset_h=tz_offset_h,
-        author_max=author_max,
-        chair_max=chair_max,
-        presentation_time_min=presentation_time_min,
-        plenary_talk_time_min=plenary_talk_time_min,
-        sort_session=sort_session,
-    )
-
-
-def csv2json(
-    input: str,
-    output: str,
-    tz_offset_h: int,
-    author_max: int = 12,
-    chair_max: int = 2,
-    presentation_time_min: int = 20,
-    plenary_talk_time_min: int = 60,
-    sort_session: Callable = default_session_sort_func,
-) -> None:
-    """Convert CSV file to JSON file.
-
-    Parameters
-    ----------
-    input : str
-        Input CSV filename.
-    output : str
-        Output JSON filename.
-    tz_offset_h : int
-        Timezone offset in hours.
-    author_max : int, optional
-        Max number of Authors, by default 12
-    chair_max : int, optional
-        Max number of Chair person, by default 2
-    presentation_time_min : int, optional
-        Presentation time in minutes, by default 20
-    plenary_talk_time_min : int, optional
-        Plenary talk time in minutes, by default 60
-    sort_session : Callable, optional
-        Function to sort sessions, by default default_session_sort_func
-    """
-    df = read_csv(input)
-    _df2json(
-        df=df,
-        output=output,
-        tz_offset_h=tz_offset_h,
-        author_max=author_max,
-        chair_max=chair_max,
         presentation_time_min=presentation_time_min,
         plenary_talk_time_min=plenary_talk_time_min,
         sort_session=sort_session,
