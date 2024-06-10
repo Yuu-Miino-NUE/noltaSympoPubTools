@@ -667,7 +667,7 @@ class ReviseItem(BaseModel):
         List of errors.
     extra_comments : str | None
         Extra message.
-    paper_id : int
+    id : int
         Paper ID.
     title : str
         Title.
@@ -677,7 +677,7 @@ class ReviseItem(BaseModel):
 
     pdf_name: str
     errors: list[str]
-    paper_id: int
+    id: int
     title: str
     contact: Person
     extra_comments: str | None = None

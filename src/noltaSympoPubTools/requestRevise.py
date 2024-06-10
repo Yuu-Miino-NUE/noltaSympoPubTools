@@ -1,7 +1,6 @@
 import os, json
 import pandas as pd
 import numpy as np
-import warnings
 
 from .models import ReviseItem, ReviseItemList, SessionList
 
@@ -74,7 +73,7 @@ def revise_sheet2json(
     revise_sheet : str
         Input sheet file path. The sheet should have the columns 'PDF_NAME', 'EXTRA_COMMENTS', and error keys.
         File format should be CSV or Excel.
-    err_msg_dict : dict[str, str]
+    err_dict : dict[str, str]
         Error message dictionary. The dictionary should have error keys as keys and error messages as values.
     data_json : str
         Data JSON file path. The JSON file should have the structure of :class:`.Session`.
@@ -86,6 +85,24 @@ def revise_sheet2json(
 
     Examples
     --------
+    The revision sheet should have the following structure.
+
+    .. literalinclude:: /py_examples/revise_sheet.csv
+
+    The data JSON file should have the structure of :class:`.Session`.
+
+    .. literalinclude:: /py_examples/data.json
+
+    Here is an example of how to use the :func:`revise_sheet2json` function.
+
+    .. literalinclude:: /py_examples/ex_revise_sheet2json.py
+
+    Refer to :func:`err_sheet2dict` for creating the error dictionary.
+    The script will output a JSON file with the following structure.
+
+    .. literalinclude:: /py_examples/revise_items.json
+
+    The created JSON file will be used in :func:`.compose_emails` or :func:`.send_email`.
 
 
     See Also
@@ -93,6 +110,9 @@ def revise_sheet2json(
     .ReviseItem: Data class for revision request
     .ReviseItemList: List of revision requests
     .SessionList: List of session information
+    .err_sheet2dict: Convert error sheet to dictionary
+    .compose_emails: Compose emails for revision requests
+    .send_email: Send emails for revision requests
     """
     if revise_sheet.endswith(".csv"):
         df = pd.read_csv(revise_sheet)
@@ -121,7 +141,7 @@ def revise_sheet2json(
             elif k == "EXTRA_COMMENTS":
                 kwargs["extra_comments"] = v
             else:
-                warnings.warn(f"Unknown column {k} in {revise_sheet}")
+                pass
 
         # Find paper in data JSON
         basename = kwargs["pdf_name"].split(".")[0]
@@ -131,7 +151,7 @@ def revise_sheet2json(
             idx2 = [p.order for p in sessions[idx].papers].index(order)
             kwargs |= {
                 k: getattr(sessions[idx].papers[idx2], k)
-                for k in ["paper_id", "title", "contact"]
+                for k in ["id", "title", "contact"]
             }
         except ValueError:
             raise ValueError(f"Paper not found in {data_json} for {kwargs['pdf_name']}")
@@ -179,7 +199,7 @@ def _get_all_pids(revise_json: str) -> set[int]:
     with open(revise_json) as f:
         data = ReviseItemList(json.load(f))
         for item in data:
-            all_ids.add(item.paper_id)
+            all_ids.add(item.id)
     return all_ids
 
 
@@ -209,7 +229,7 @@ def get_ritems(revise_json: str, pids: set[int]) -> ReviseItemList:
     ret = ReviseItemList()
     for id in pids:
         try:
-            idx = [item.paper_id for item in data].index(id)
+            idx = [item.id for item in data].index(id)
             ret.append(data[idx])
         except ValueError:
             raise ValueError(f"Paper ID {id} not found in the JSON file.")

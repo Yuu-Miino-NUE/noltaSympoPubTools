@@ -187,14 +187,15 @@ def _make_body(
     return body
 
 
-def compose_emails(input_json: str, subject: str, template_file: str) -> list[MIMEText]:
+def compose_emails(
+    revise_json: str, subject: str, template_file: str
+) -> list[MIMEText]:
     """Compose emails from JSON data and template file.
 
     Parameters
     ----------
-    input_json : str
-        Path to the input JSON file.
-        The JSON file should have the structure of :class:`.ReviseItem`.
+    revise_json : str
+        Path to the input JSON file. The JSON file should have the structure of :class:`.ReviseItem`.
     subject : str
         Subject line of the email. The string should contain a placeholder ``{id}``.
     template_file : str
@@ -247,30 +248,30 @@ def compose_emails(input_json: str, subject: str, template_file: str) -> list[MI
     save_emails: Save emails as text files.
     send_email: Send email.
     """
-    with open(input_json) as f:
+    with open(revise_json) as f:
         data = [ReviseItem(**r) for r in json.load(f)]
 
-    with open(template_file, "r") as f:
+    with open(template_file) as f:
         template = f.read()
 
-    emails = []
+    emails: list[MIMEText] = []
     for d in data:
         if d.contact.email is None:
             raise ValueError(f"Email address not found for {d.contact.name}")
 
         body = _make_body(d.contact.name, d.title, d.errors, d.extra_comments, template)
-        email = _make_email(d.contact.email, subject.format(id=d.paper_id), body)
+        email = _make_email(d.contact.email, subject.format(id=d.id), body)
         emails.append(email)
     return emails
 
 
-def save_emails(input_json: str, msgs: list[MIMEText], out_dir: str = "") -> None:
+def save_emails(revise_json: str, msgs: list[MIMEText], out_dir: str = "") -> None:
     """Save emails as text files.
 
     Parameters
     ----------
-    input_json : str
-        Path to the input JSON file.
+    revise_json : str
+        Path to the input JSON file. The JSON file should have the structure of :class:`.ReviseItem`.
     msgs : list[MIMEText]
         List of MIMEText objects.
     out_dir : str, optional
@@ -288,17 +289,17 @@ def save_emails(input_json: str, msgs: list[MIMEText], out_dir: str = "") -> Non
     compose_emails: Compose emails from JSON data and template file.
     """
     try:
-        with open(input_json) as f:
+        with open(revise_json) as f:
             data = [ReviseItem(**r) for r in json.load(f)]
     except FileNotFoundError:
-        raise FileNotFoundError(f"Input JSON file not found: {input_json}")
+        raise FileNotFoundError(f"Input JSON file not found: {revise_json}")
 
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
 
     try:
         for d, m in zip(data, msgs):
-            with open(os.path.join(out_dir, str(d.paper_id) + ".txt"), "w") as f:
+            with open(os.path.join(out_dir, str(d.id) + ".txt"), "w") as f:
                 f.write(m.as_string())
     except FileNotFoundError:
         raise FileNotFoundError(f"Output directory not found: {out_dir}")
