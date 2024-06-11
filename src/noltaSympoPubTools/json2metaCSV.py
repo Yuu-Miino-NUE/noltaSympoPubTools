@@ -48,7 +48,7 @@ def json2meta_sessions(
     --------
     Each record in the data JSON file should have the structure of :class:`.Session`.
 
-    .. literalinclude:: /py_examples/data.json
+    .. literalinclude:: /py_examples/data_with_pages.json
         :caption: data.json
         :language: json
 
@@ -152,7 +152,7 @@ def load_articles(data_json: str, award_json: str) -> MetaArticleList:
     --------
     Each record in the data JSON file should have the structure of :class:`.Session`.
 
-    .. literalinclude:: /py_examples/data.json
+    .. literalinclude:: /py_examples/data_with_pages.json
         :caption: data.json
         :language: json
 

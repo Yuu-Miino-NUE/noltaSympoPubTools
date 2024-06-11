@@ -93,7 +93,7 @@ def load_revise_sheet(
 
     The data JSON file should have the structure of :class:`.Session`.
 
-    .. literalinclude:: /py_examples/data.json
+    .. literalinclude:: /py_examples/data_with_pages.json
         :caption: data.json
         :language: json
 

@@ -100,7 +100,7 @@ def stamp_all_pdfs(
     Using :meth:`.SessionList.dump_json`, the updated data can be saved to the JSON file.
 
     .. literalinclude:: /py_examples/pages.diff
-        :caption: diff between ``data.json`` and ``data_with_pages.json``
+        :caption: diff between ``data.json`` and ``data_with_pages.json.json``
 
     See Also
     --------

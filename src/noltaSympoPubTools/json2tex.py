@@ -70,9 +70,19 @@ def json2ss_tex(data_json: str, ss_organizers_json: str, output: str):
 
     Examples
     --------
-    Here is an example of how to use the :func:`json2ssTex` function.
+    Prepare JSON files with the following structure:
 
-    .. literalinclude:: /py_examples/ex_json2ssTex.py
+    .. literalinclude:: /py_examples/data_with_pages.json
+        :caption: data.json
+        :language: json
+
+    .. literalinclude:: /py_examples/ss_organizers.json
+        :caption: ss_organizers.json
+        :language: json
+
+    Here is an example of how to use the :func:`json2ss_tex` function.
+
+    .. literalinclude:: /py_examples/ex_json2ss_tex.py
 
     The output TeX file will have the following structure:
 
@@ -197,9 +207,15 @@ def json2papers_tex(data_json: str, output: str):
 
     Examples
     --------
-    Here is an example of how to use the :func:`json2papersTex` function.
+    Prepare a JSON file with the following structure:
 
-    .. literalinclude:: /py_examples/ex_json2papersTex.py
+    .. literalinclude:: /py_examples/data_with_pages.json
+        :caption: data.json
+        :language: json
+
+    Here is an example of how to use the :func:`.json2papers_tex` function.
+
+    .. literalinclude:: /py_examples/ex_json2papers_tex.py
 
     The output TeX file will have the following structure:
 
@@ -284,9 +300,15 @@ def json2spanel_texs(data_json: str, output_dir: str):
 
     Examples
     --------
-    Here is an example of how to use the :func:`json2spanelTexs` function.
+    Prepare a JSON file with the following structure:
 
-    .. literalinclude:: /py_examples/ex_json2spanelTexs.py
+    .. literalinclude:: /py_examples/data_with_pages.json
+        :caption: data.json
+        :language: json
+
+    Here is an example of how to use the :func:`json2spanel_texs` function.
+
+    .. literalinclude:: /py_examples/ex_json2spanel_texs.py
 
     The output TeX files will have the following structure:
 

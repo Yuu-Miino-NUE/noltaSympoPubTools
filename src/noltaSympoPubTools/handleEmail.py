@@ -42,46 +42,46 @@ def send_email(
         Email message to send.
     dry_run : bool, optional
         If `True`, the email is not sent and only logged, by default `True`.
-
-        .. attention::
-
-            To send an email, you need to turn off the ``dry_run`` option.
-
     dump : bool, optional
         If `True`, the email is saved to a file, by default `True`.
         Dumped emails are saved in the directory specified in the environment variable LOG_DIR.
     load_env : bool, optional
         If `True`, load environment variables written in a ``.env`` file, by default False.
 
-        .. note::
 
-            ``send_email`` supports sending emails using the SMTP server specified in the environment variables.
-            Please set the following environment variables:
+    .. attention::
 
-            ==================== ==============================
-            Environment variable Description
-            ==================== ==============================
-            SMTP_SERVER          SMTP server address
-            SMTP_PORT            SMTP server port
-            SMTP_USER            SMTP username
-            SMTP_USERNAME        SMTP username (for display)
-            SMTP_PASSWORD        SMTP password (optional)
-            ==================== ==============================
+        To send an email, you need to turn off the ``dry_run`` option.
 
-            ``send_email`` also logs the email message to the log file specified in the environment variable LOG_DIR.
-            Configuration for logging can be set in a JSON file and specified in the environment variable LOG_CONFIG.
+    .. note::
 
-            One will prepare a ``.env`` file with the following content:
+        :func:`.send_email` supports sending emails using the SMTP server specified in the environment variables.
+        Please set the following environment variables:
 
-            .. code-block:: shell
+        ==================== ==============================
+        Environment variable Description
+        ==================== ==============================
+        SMTP_SERVER          SMTP server address
+        SMTP_PORT            SMTP server port
+        SMTP_USER            SMTP username
+        SMTP_USERNAME        SMTP username (for display)
+        SMTP_PASSWORD        SMTP password (optional)
+        ==================== ==============================
 
-                    SMTP_SERVER=smtp.example.com
-                    SMTP_PORT=587
-                    SMTP_USER=YOUR_EMAIL_ADDRESS
-                    SMTP_USERNAME=YOUR_NAME
-                    SMTP_PASSWORD=YOUR_PASSWORD
-                    LOG_DIR=.log
-                    LOG_CONFIG=log_config.json
+        :func:`.send_email` also logs the email message to the log file specified in the environment variable LOG_DIR.
+        Configuration for logging can be set in a JSON file and specified in the environment variable LOG_CONFIG.
+
+        One will prepare a ``.env`` file with the following content:
+
+        .. code-block:: shell
+
+                SMTP_SERVER=smtp.example.com
+                SMTP_PORT=587
+                SMTP_USER=YOUR_EMAIL_ADDRESS
+                SMTP_USERNAME=YOUR_NAME
+                SMTP_PASSWORD=YOUR_PASSWORD
+                LOG_DIR=.log
+                LOG_CONFIG=log_config.json
 
     Returns
     -------

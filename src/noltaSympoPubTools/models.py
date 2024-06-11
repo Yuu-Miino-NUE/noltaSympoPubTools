@@ -5,7 +5,7 @@
 
 """
 
-from typing import Generic, Literal, TypeAlias, TypeVar, Sequence
+from typing import Generic, Literal, TypeAlias, TypeVar
 from datetime import date, datetime, time
 import json
 import csv
@@ -27,6 +27,7 @@ __all__ = [
     "Metadata",
     "MetadataList",
     "Award",
+    "AwardList",
     "CommonInfo",
     "ReviseItem",
     "ReviseItemList",
@@ -65,6 +66,7 @@ class Award(BaseModel):
     See Also
     --------
     .AwardList: List of awards
+    .load_articles: Load award information from JSON file
     """
 
     id: str
@@ -111,6 +113,10 @@ class CommonInfo(BaseModel):
     ----
     IEICE における 国際会議メタデータ仕様書_
 
+    See Also
+    --------
+    .MetaCommon: Data class for common information
+    .load_common: Load common information from JSON file
 
     """
 
@@ -173,8 +179,8 @@ class MetaPerson:
 
     See Also
     --------
-    MetaSession
-    MetaArticle
+    .MetaSession
+    .MetaArticle
 
     """
 
@@ -321,7 +327,8 @@ class MetaSession(Metadata):
 
     See Also
     --------
-    MetaSessionList : List of session information
+    .MetaSessionList : List of session information
+    .json2meta_sessions : Load session information from JSON file
     """
 
     def __init__(
@@ -395,7 +402,8 @@ class MetaArticle(Metadata):
 
     See Also
     --------
-    MetaArticleList : List of paper information
+    .MetaArticleList : List of paper information
+    .load_articles : Load paper information from JSON file
     """
 
     def __init__(
@@ -441,6 +449,11 @@ class MetaSessionList(MetadataList[MetaSession]):
     sessions : list[dict]
         List of session dictionaries. Each dictionary should have the structure of :class:`.MetaSession`.
         Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .json2meta_sessions: Load session information from JSON file
+    .MetaSession: Data class for session
     """
 
     def __init__(self, sessions: list[dict] = []) -> None:
@@ -455,6 +468,11 @@ class MetaArticleList(MetadataList[MetaArticle]):
     articles : list[dict]
         List of paper dictionaries. Each dictionary should have the structure of :class:`.MetaArticle`.
         Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .load_articles: Load paper information from JSON file
+    .MetaArticle: Data class for paper
     """
 
     def __init__(self, articles: list[dict] = []) -> None:
@@ -490,6 +508,10 @@ class MetaCommon(Metadata):
         Date published.
     publisher : str
         Publisher.
+
+    See Also
+    --------
+    .load_common: Load common information from JSON file
     """
 
     def __init__(
@@ -538,6 +560,14 @@ class Person(BaseModel):
         Organization.
     country : str | None
         Country.
+    email : str | None
+        Email.
+
+    See Also
+    --------
+    .Paper: Data class for paper
+    .Session: Data class for session
+    .load_session_sheet: Convert CSV to JSON
     """
 
     name: str
@@ -571,6 +601,12 @@ class Paper(BaseModel):
         Start time.
     plenary : bool
         Plenary session or not.
+
+    See Also
+    --------
+    .Person: Data class for person
+    .Session: Data class for session
+    .load_session_sheet: Convert CSV to JSON
     """
 
     id: int
@@ -611,21 +647,12 @@ class Session(BaseModel):
     papers : list[Paper]
         List of papers.
 
-    Examples
-    --------
-    In the JSON format, the data should be structured as follows:
-
-    .. literalinclude:: /py_examples/data.json
-        :caption: data.json
-        :language: json
-
-    From the original CSV file dumped from the database, the JSON data can be generated using the :func:`.load_session_sheet` function.
-
     See Also
     --------
     .Person: Data class for person
     .Paper: Data class for paper
     .load_session_sheet: Convert CSV to JSON
+    .SessionList: List of sessions
     """
 
     name: str
@@ -688,6 +715,11 @@ class SessionList(BaseModelList[Session]):
     sessions : list[dict]
         List of session dictionaries. Each dictionary should have the structure of :class:`.Session`.
         Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .Session: Data class for session
+    .BaseModelList: List of basemodels
     """
 
     def __init__(self, sessions: list[dict] = []) -> None:
@@ -711,6 +743,12 @@ class ReviseItem(BaseModel):
         Title.
     contact : Person
         Contact information of the corresponding author.
+
+    See Also
+    --------
+    .Person: Data class for person
+    .ReviseItemList: List of revise items
+    .handleEmail: Module for handling emails
     """
 
     pdf_name: str
@@ -729,6 +767,12 @@ class AwardList(BaseModelList[Award]):
     awards : list[dict]
         List of award dictionaries. Each dictionary should have the structure of :class:`.Award`.
         Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .Award: Data class for award
+    .BaseModelList: List of basemodels
+    .load_articles: Load award information from JSON file
     """
 
     def __init__(self, awards: list[dict] = []) -> None:
@@ -743,6 +787,11 @@ class ReviseItemList(BaseModelList[ReviseItem]):
     revise_items : list[dict]
         List of revise item dictionaries. Each dictionary should have the structure of :class:`.ReviseItem`.
         Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .ReviseItem: Data class for revise item
+    .handleEmail: Module for handling emails
     """
 
     def __init__(self, revise_items: list[dict] = []) -> None:
@@ -813,6 +862,11 @@ class SSOrganizerList(BaseModelList[SSOrganizer]):
     ss_organizers : list[dict]
         List of session organizer dictionaries. Each dictionary should have the structure of :class:`.SSOrganizer`.
         Generally, the data will be loaded from a JSON file.
+
+    See Also
+    --------
+    .SSOrganizer: Data class for session
+    .json2meta_sessions: Load session information from JSON file
     """
 
     def __init__(self, ss_organizers: list[dict] = []) -> None:
