@@ -1,10 +1,10 @@
 .. _国際会議メタデータ仕様書: https://www.ieice.org/jpn/books/pdf/metadata.pdf
-
+.. _電子情報通信学会 NOLTA ソサイエティ: https://www.ieice.org/nolta/
 
 イントロダクション
 ===================
 
-:mod:`noltaSympoPubTools` は，電子情報通信学会 NOLTA ソサイエティが主催する国際シンポジウム NOLTA の出版物について，その作成を支援する目的で構成された Python パッケージです．
+:mod:`noltaSympoPubTools` は，`電子情報通信学会 NOLTA ソサイエティ`_ が主催する国際シンポジウム NOLTA の出版物について，その作成を支援する目的で構成された Python パッケージです．
 対象となる出版物は，以下の通りです．
 
 - シンポジウムの Proceedings
