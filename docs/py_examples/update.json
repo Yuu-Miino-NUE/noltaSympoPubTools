@@ -1,0 +1,16 @@
+[
+    {
+        "category": [
+            "s",
+            1
+        ],
+        "category_order": 1,
+        "papers": [
+            {
+                "id": 6000,
+                "title": "Paper 1 (updated)",
+                "abstract": "This is an updated abstract."
+            }
+        ]
+    }
+]

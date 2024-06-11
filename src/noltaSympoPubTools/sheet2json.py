@@ -41,8 +41,11 @@ def _update_papers(session: Session, papers: list[dict]):
                 break
 
 
-def update_sessions(data_json: str, update_json: str, verbose: bool = True) -> None:
+def update_sessions(
+    data_json: str, update_json: str, overwrite: bool = False
+) -> SessionList:
     """Update session data with the update data.
+    This method is useful when you need to update the session data with the latest information.
 
     Parameters
     ----------
@@ -52,11 +55,28 @@ def update_sessions(data_json: str, update_json: str, verbose: bool = True) -> N
         Update JSON filename. The fields ``category`` and ``category_order`` are necessary to identify the session.
         If updating papers, the field ``papers`` is also necessary.
         For each updating paper, the field ``id`` is necessary to identify the paper.
+    overwrite : bool, optional
+        Overwrite the input JSON file, by default False.
 
-    Raises
-    ------
-    ValueError
-        If session not found.
+    Examples
+    --------
+    We have the following JSON files:
+
+    .. literalinclude:: ../py_examples/data.json
+        :caption: data.json
+        :language: json
+
+    .. literalinclude:: ../py_examples/update.json
+        :caption: update.json
+        :language: json
+
+    Here is an example of how to update the session data with the update data.
+
+    .. literalinclude:: ../py_examples/ex_update_sessions.py
+
+    .. literalinclude:: ../py_examples/update.diff
+        :caption: diff between ``data.json`` and ``updated_data.json``
+
     """
     with open(data_json) as f:
         sessions = SessionList(json.load(f))
@@ -85,7 +105,10 @@ def update_sessions(data_json: str, update_json: str, verbose: bool = True) -> N
                         f"Session not found: {ud['category']} {ud['category_order']} ({update_json} / {data_json})"
                     )
 
-    sessions.dump_json(data_json, verbose)
+    if overwrite:
+        sessions.dump_json(data_json)
+
+    return sessions
 
 
 def _df2json(

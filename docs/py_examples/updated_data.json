@@ -1,0 +1,52 @@
+[
+    {
+        "name": "(S1-1) Special Session on Example",
+        "type": "L",
+        "code": "A2L-2",
+        "category": [
+            "s",
+            1
+        ],
+        "category_order": 1,
+        "location": "Room 1",
+        "chairs": [
+            {
+                "name": "John Doe",
+                "organization": "University of Example",
+                "country": null,
+                "email": null
+            }
+        ],
+        "start_time": "2023-09-26T10:00:00+02:00",
+        "end_time": "2023-09-26T12:00:00+02:00",
+        "papers": [
+            {
+                "id": 6000,
+                "title": "Paper 1 (updated)",
+                "order": 1,
+                "contact": {
+                    "name": "John Doe",
+                    "organization": "University of Example",
+                    "country": "United States",
+                    "email": "john@example.com"
+                },
+                "pages": null,
+                "abstract": "This is an updated abstract.",
+                "keywords": [
+                    "keyword1",
+                    "keyword2"
+                ],
+                "authors": [
+                    {
+                        "name": "John Doe",
+                        "organization": "University of Example",
+                        "country": "United States",
+                        "email": null
+                    }
+                ],
+                "start_time": "2023-09-26T10:00:00+02:00",
+                "plenary": false
+            }
+        ]
+    }
+]
