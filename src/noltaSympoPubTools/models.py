@@ -567,7 +567,7 @@ class Person(BaseModel):
     --------
     .Paper: Data class for paper
     .Session: Data class for session
-    .load_session_sheet: Convert CSV to JSON
+    .load_epapers_sheet: Convert CSV to JSON
     """
 
     name: str
@@ -606,7 +606,7 @@ class Paper(BaseModel):
     --------
     .Person: Data class for person
     .Session: Data class for session
-    .load_session_sheet: Convert CSV to JSON
+    .load_epapers_sheet: Convert CSV to JSON
     """
 
     id: int
@@ -651,7 +651,7 @@ class Session(BaseModel):
     --------
     .Person: Data class for person
     .Paper: Data class for paper
-    .load_session_sheet: Convert CSV to JSON
+    .load_epapers_sheet: Convert CSV to JSON
     .SessionList: List of sessions
     """
 

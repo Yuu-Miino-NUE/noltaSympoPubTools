@@ -8,7 +8,7 @@ from pandas import DataFrame, read_excel, read_csv
 from .models import Session, Paper, Person, SessionList
 
 __all__ = [
-    "load_session_sheet",
+    "load_epapers_sheet",
     "default_session_sort_func",
     "update_sessions",
 ]
@@ -146,8 +146,8 @@ def _df2json(
     return sessions
 
 
-def load_session_sheet(
-    input: str,
+def load_epapers_sheet(
+    filename: str,
     tz_offset_h: int,
     presentation_time_min=20,
     plenary_talk_time_min=60,
@@ -158,8 +158,8 @@ def load_session_sheet(
 
     Parameters
     ----------
-    input : str
-        Input Excel/CSV filename.
+    filename : str
+        filename Excel/CSV filename.
     tz_offset_h : int
         Timezone offset in hours.
     presentation_time_min : int, optional
@@ -178,7 +178,7 @@ def load_session_sheet(
 
     Examples
     --------
-    The ``input`` file will be an Excel/CSV file with the following columns:
+    The ``filename`` file will be an Excel/CSV file with the following columns:
 
     .. list-table::
         :header-rows: 1
@@ -269,7 +269,7 @@ def load_session_sheet(
 
     The following code will convert the Excel/CSV file to a JSON file:
 
-    .. literalinclude:: ../py_examples/ex_load_session_sheet.py
+    .. literalinclude:: ../py_examples/ex_load_epapers_sheet.py
 
     The dumped JSON file will have the following structure:
 
@@ -278,13 +278,13 @@ def load_session_sheet(
         :language: json
 
     """
-    if input.endswith(".xlsx"):
+    if filename.endswith(".xlsx"):
         if excel_sheet_name is not None:
-            df = read_excel(input, sheet_name=excel_sheet_name)
+            df = read_excel(filename, sheet_name=excel_sheet_name)
         else:
-            df = read_excel(input)
+            df = read_excel(filename)
     else:
-        df = read_csv(input)
+        df = read_csv(filename)
     return _df2json(
         df=df,
         tz_offset_h=tz_offset_h,
