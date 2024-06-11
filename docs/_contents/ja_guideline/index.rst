@@ -11,3 +11,4 @@ Japanese Guideline
     introduction
     venv
     load_from_db
+    stamp_pdf
