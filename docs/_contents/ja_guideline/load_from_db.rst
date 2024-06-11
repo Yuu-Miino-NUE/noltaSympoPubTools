@@ -10,19 +10,23 @@ CSV から JSON への変換
 ----------------------------
 
 前提として，Epapers_ のシステムからエクスポートされた CSV ファイルを読み込み，JSON 形式に変換することを考えます．
-:func:`.load_epapers_sheet` 関数を用いることで，CSV ファイルを読み込み，
-得られる :class:`.SessionList` オブジェクトを :meth:`.dump_json` メソッドによって JSON 形式に変換することができます．
+:func:`.load_epapers_sheet` 関数を用いることで，CSV ファイルを読み込みます．
 
 .. literalinclude:: /py_examples/ex_load_epapers_sheet.py
     :language: python
+    :lines: 1-6
 
-上記のプログラムによって，CSV ファイルが読み込まれ，JSON ファイルが出力されます．
+``tz_offset_h`` 引数は，タイムゾーンのオフセットを指定します．
+GMT からのオフセットを時間で指定することで，現地時間に変換することができます．
+日本の場合， ``tz_offset_h=9`` と指定します．
 
-.. hint::
+その他の引数は，:func:`.load_epapers_sheet` 関数の仕様を参照ください．
 
-    :func:`.load_epapers_sheet` の ``tz_offset_h`` 引数は，タイムゾーンのオフセットを指定します．
-    GMT からのオフセットを時間で指定することで，現地時間に変換することができます．
-    日本の場合， ``tz_offset_h=9`` と指定します．
+生成された :class:`.SessionList` オブジェクトは，セッション情報を保持します．
+セッションの保存順序は，デフォルトではセッションコード，オーダに基づきますが，``sort_session`` 引数に
+任意のソート関数を指定できます．
+セッションの保存順序は :doc:`stamp_pdf` のページ番号付与に影響します．
+
 
 .. attention::
 
@@ -36,15 +40,20 @@ CSV から JSON への変換
     :class:`.SessionList` オブジェクトさえ作成できれば，本パッケージの他の機能を利用することができます．
 
 
-なお，:meth:`.dump_json` によって出力される JSON ファイルは，以下のような形式になります．
+:class:`.SessionList` オブジェクト の :meth:`.dump_json` により，オブジェクトを JSON 形式で保存できます．
+
+.. literalinclude:: /py_examples/ex_load_epapers_sheet.py
+    :language: python
+    :lines: 8-
+
+保存した JSON ファイルは，以下のような形式になります．
 
 .. literalinclude:: /py_examples/data.json
     :language: json
 
 JSON に含まれているデータの構造は，:class:`.Session` オブジェクトの属性に対応しています．
-なお，``pages`` が ``null`` となりますが，ページ番号は DB 上に存在しないためです．後の工程で，ページ番号を付与します．
-
-.. TODO: 工程へのリンク
+なお，``pages`` が ``null`` となりますが，ページ番号は DB 上に存在しないためです．
+ページ番号は :doc:`stamp_pdf` で付与します．
 
 .. attention::
 

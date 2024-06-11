@@ -12,7 +12,10 @@ Overlay PDF の作成
 原稿 PDF にロゴや学会情報をスタンプするためには，スタンプ用の PDF ファイル（以下，Overlay PDF）を作成する必要があります．
 別パッケージではありますが，PdfStampTools_ の
 :func:`.put_logo_with_text` 関数を用いることで，ロゴ画像と学会情報を含む Overlay PDF を作成することができます．
-PdfStampTools_ は，本パッケージと依存関係にありますので，追加でインストールする必要はありません．
+
+.. note::
+
+    PdfStampTools_ は，本パッケージと依存関係にありますので，追加でインストールする必要はありません．
 
 .. literalinclude:: /py_examples/ex_put_logo_with_text.py
     :language: python
@@ -62,10 +65,12 @@ Overlay PDF を用意したら，原稿 PDF にスタンプを行います．
 
     ページ番号の付与は，著者情報 JSON に保存されている順番で行われます．
 
-.. hint::
-
-    何かしらの要因で単一の PDF にスタンプを行いたい場合は，:func:`.stamp_single_pdf` 関数を使用してください．
-    こちらの関数では開始ページを指定できます．
+.. seealso::
+    :func:`.stamp_all_pdfs`
+        全ての PDF にスタンプする関数．
+    :func:`.stamp_single_pdf`
+        単一の PDF にスタンプする関数．何かしらの要因で単一の PDF にスタンプを行いたい場合に使用．
+        開始ページを指定可能．
 
 ページ番号の保存
 ----------------------
@@ -77,6 +82,10 @@ Overlay PDF を用意したら，原稿 PDF にスタンプを行います．
     :language: python
     :lines: 11-
 
+.. seealso::
+    :meth:`.dump_json`
+        オブジェクトを JSON ファイルとして保存するメソッド．
+
 原稿 PDF の統合
 ----------------------
 
@@ -85,3 +94,6 @@ Overlay PDF を用意したら，原稿 PDF にスタンプを行います．
 .. literalinclude:: /py_examples/ex_merge_all_pdfs.py
     :language: python
 
+.. seealso::
+    :func:`.merge_all_pdfs`
+        全ての PDF を統合する関数．
