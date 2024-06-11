@@ -20,10 +20,10 @@ from .models import (
     SSOrganizerList,
 )
 
-__all__ = ["load_common", "load_articles", "load_sessions"]
+__all__ = ["load_common", "load_articles", "json2meta_sessions"]
 
 
-def load_sessions(
+def json2meta_sessions(
     data_json: str, ss_organizers_json: str, common_json: str
 ) -> MetaSessionList:
     """Load session information from JSON file.
@@ -64,9 +64,9 @@ def load_sessions(
         :caption: common.json
         :language: json
 
-    Here is an example of how to use the :func:`load_sessions` function.
+    Here is an example of how to use the :func:`json2meta_sessions` function.
 
-    .. literalinclude:: /py_examples/ex_load_sessions.py
+    .. literalinclude:: /py_examples/ex_json2meta_sessions.py
 
     For dumping the metadata CSV file, the template file should have the following structure:
 

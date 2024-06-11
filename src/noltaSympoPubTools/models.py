@@ -266,7 +266,7 @@ class MetadataList(list[TMD], Generic[TMD]):
         --------
         .MetaSessionList: List of session information
         .MetaArticleList: List of paper information
-        .load_sessions: Load session information from JSON file
+        .json2meta_sessions: Load session information from JSON file
         .load_articles: Load paper information from JSON file
         """
         _dump_metadata_csv(self, filename, template)
@@ -528,6 +528,18 @@ class MetaCommon(Metadata):
 
 
 class Person(BaseModel):
+    """Person information.
+
+    Parameters
+    ----------
+    name : str
+        Name.
+    organization : str
+        Organization.
+    country : str | None
+        Country.
+    """
+
     name: str
     organization: str
     country: str | None = None
@@ -535,6 +547,32 @@ class Person(BaseModel):
 
 
 class Paper(BaseModel):
+    """Paper information.
+
+    Parameters
+    ----------
+    id : int
+        Paper ID.
+    title : str
+        Title.
+    order : int
+        Order.
+    contact : Person
+        Contact information of the corresponding author.
+    pages : tuple[int, int] | None
+        Pages, or None if not available.
+    abstract : str
+        Abstract.
+    keywords : list[str]
+        Keywords.
+    authors : list[Person]
+        List of authors.
+    start_time : datetime | None
+        Start time.
+    plenary : bool
+        Plenary session or not.
+    """
+
     id: int
     title: str
     order: int
@@ -581,13 +619,13 @@ class Session(BaseModel):
         :caption: data.json
         :language: json
 
-    From the original CSV file dumped from the database, the JSON data can be generated using the :func:`.csv2json` function.
+    From the original CSV file dumped from the database, the JSON data can be generated using the :func:`.load_session_sheet` function.
 
     See Also
     --------
     .Person: Data class for person
     .Paper: Data class for paper
-    .csv2json: Convert CSV to JSON
+    .load_session_sheet: Convert CSV to JSON
     """
 
     name: str
