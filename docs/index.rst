@@ -7,8 +7,15 @@ Welcome to noltaSympoPubTools's documentation!
 ==============================================
 
 .. toctree::
-   :maxdepth: 4
-   :caption: Contents:
+   :maxdepth: 1
+   :caption: Contents
+
+   _contents/get_started
+   _contents/ja_guideline/index
+
+.. toctree::
+   :maxdepth: 1
+   :caption: API Reference
 
    _apidocs/noltaSympoPubTools
 
