@@ -89,10 +89,13 @@ def load_revise_sheet(
     The revision sheet should have the following structure.
 
     .. literalinclude:: /py_examples/revise_sheet.csv
+        :caption: revise_sheet.csv
 
     The data JSON file should have the structure of :class:`.Session`.
 
     .. literalinclude:: /py_examples/data.json
+        :caption: data.json
+        :language: json
 
     Here is an example of how to use the :func:`load_revise_sheet` function.
 
@@ -102,6 +105,8 @@ def load_revise_sheet(
     The script will output a JSON file with the following structure.
 
     .. literalinclude:: /py_examples/revise_items.json
+        :caption: revise_items.json
+        :language: json
 
     The created JSON file will be used in :func:`.compose_emails` or :func:`.send_email`.
 
