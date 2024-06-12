@@ -159,7 +159,7 @@ def load_articles(data_json: str, award_json: str) -> MetaArticleList:
     Each record in the award JSON file should have the structure of :class:`.Award`.
 
     .. literalinclude:: /py_examples/awards.json
-        :caption: award.json
+        :caption: awards.json
         :language: json
 
     Here is an example of how to use the :func:`load_articles` function.
