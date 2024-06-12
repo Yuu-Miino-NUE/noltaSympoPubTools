@@ -6,6 +6,8 @@
 本パッケージは，原稿 PDF に対してロゴやページ番号をスタンプする機能を提供します．
 関連する機能は，:mod:`.pdfTools` モジュールにまとめられています．
 
+.. _overlay:
+
 Overlay PDF の作成
 ----------------------
 
@@ -20,6 +22,7 @@ Overlay PDF の作成
 .. literalinclude:: /py_examples/ex_put_logo_with_text.py
     :language: python
 
+``logo.png`` にはシンポジウムのロゴを指定します．
 上記のプログラムによって，次のような Overlay PDF が出力されます．
 
 .. image:: /_images/first_page_overlay.png
