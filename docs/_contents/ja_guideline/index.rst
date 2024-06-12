@@ -13,5 +13,6 @@ Japanese Guideline
     load_from_db
     stamp_pdf
     generate_tex
+    revising
     request_revise
     generate_meta
