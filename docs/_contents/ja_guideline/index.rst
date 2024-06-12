@@ -12,3 +12,4 @@ Japanese Guideline
     venv
     load_from_db
     stamp_pdf
+    generate_tex

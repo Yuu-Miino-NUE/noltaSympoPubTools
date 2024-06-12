@@ -27,6 +27,7 @@ Overlay PDF の作成
     :width: 50%
     :align: center
 
+.. _pdf_stamp:
 
 PDF スタンピング
 ----------------------
@@ -71,6 +72,8 @@ Overlay PDF を用意したら，原稿 PDF にスタンプを行います．
     :func:`.stamp_single_pdf`
         単一の PDF にスタンプする関数．何かしらの要因で単一の PDF にスタンプを行いたい場合に使用．
         開始ページを指定可能．
+
+.. _save_page:
 
 ページ番号の保存
 ----------------------
