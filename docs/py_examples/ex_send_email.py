@@ -1,15 +1,14 @@
 from noltaSympoPubTools.handleEmail import compose_emails, send_email
 
 emails = compose_emails(
-    input_json="revise_items.json",
+    revise_json="revise_items.json",
     subject="Revision request for paper {id}",
-    template_file="template.txt",
+    template_file="email_templates/initial_contact.txt",
 )
 
 for email in emails:
     send_email(
         msg=email,
-        dry_run=False,
+        dry_run=True,  # Set to False to send the email
         dump=True,
-        load_env=True,
     )

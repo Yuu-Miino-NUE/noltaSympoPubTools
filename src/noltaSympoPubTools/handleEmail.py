@@ -6,7 +6,7 @@ from logging import getLogger, config
 import os
 from dotenv import load_dotenv
 
-from .models import ReviseItem, SMTPConfig
+from .models import ReviseItem, ReviseItemList, SMTPConfig
 
 __all__ = [
     "send_email",
@@ -31,9 +31,7 @@ def _load_config() -> SMTPConfig:
     return SMTPConfig(**d)
 
 
-def send_email(
-    msg: MIMEText, dry_run: bool = True, dump: bool = True, load_env: bool = False
-) -> bool:
+def send_email(msg: MIMEText, dry_run: bool = True, dump: bool = True) -> bool:
     """Send email
 
     Parameters
@@ -44,9 +42,7 @@ def send_email(
         If `True`, the email is not sent and only logged, by default `True`.
     dump : bool, optional
         If `True`, the email is saved to a file, by default `True`.
-        Dumped emails are saved in the directory specified in the environment variable LOG_DIR.
-    load_env : bool, optional
-        If `True`, load environment variables written in a ``.env`` file, by default False.
+        Dumped emails are saved in the directory specified in the environment variable DUMP_DIR.
 
 
     .. attention::
@@ -68,7 +64,7 @@ def send_email(
         SMTP_PASSWORD        SMTP password (optional)
         ==================== ==============================
 
-        :func:`.send_email` also logs the email message to the log file specified in the environment variable LOG_DIR.
+        :func:`.send_email` also logs the email message to the log file specified in the environment variable DUMP_DIR.
         Configuration for logging can be set in a JSON file and specified in the environment variable LOG_CONFIG.
 
         One will prepare a ``.env`` file with the following content:
@@ -80,7 +76,7 @@ def send_email(
                 SMTP_USER=YOUR_EMAIL_ADDRESS
                 SMTP_USERNAME=YOUR_NAME
                 SMTP_PASSWORD=YOUR_PASSWORD
-                LOG_DIR=.log
+                DUMP_DIR=.log
                 LOG_CONFIG=log_config.json
 
     Returns
@@ -101,7 +97,7 @@ def send_email(
         SMTP_USER=YOUR_EMAIL_ADDRESS
         SMTP_USERNAME=YOUR_NAME
         SMTP_PASSWORD=YOUR_PASSWORD
-        LOG_DIR=.log
+        DUMP_DIR=.log
         LOG_CONFIG=log_config.json
 
     Then, run a Python script to send an email:
@@ -114,14 +110,12 @@ def send_email(
     compose_emails: Compose emails from JSON data and template file.
 
     """
-    # Load environment variables
-    if load_env:
-        load_dotenv()
+    load_dotenv(dotenv_path=os.path.join(os.getcwd(), ".env"))
 
     # Set up logging
     if (log_config_file := os.getenv("LOG_CONFIG")) is not None:
         try:
-            with open(log_config_file, "r") as f:
+            with open(os.path.join(os.getcwd(), log_config_file), "r") as f:
                 log_conf = json.load(f)
             config.dictConfig(log_conf)
 
@@ -130,11 +124,15 @@ def send_email(
                 f"Specified log config file not found: {log_config_file}"
             )
 
-    logger = getLogger(__name__)
-    log_dir = os.getenv("LOG_DIR") or ".log"
+    logger = getLogger("email_logger")
+    dump_dir = os.getenv("DUMP_DIR") or ".log"
 
     try:
         CONFIG = _load_config()
+        _msg = msg
+        _msg["From"] = formataddr((CONFIG.SMTP_USERNAME, CONFIG.SMTP_USER))
+        _msg["Bcc"] = CONFIG.SMTP_USER
+
         s = smtplib.SMTP(CONFIG.SMTP_SERVER, CONFIG.SMTP_PORT)
         s.ehlo()
         s.starttls()
@@ -142,31 +140,30 @@ def send_email(
         if CONFIG.SMTP_PASSWORD is not None:
             s.login(CONFIG.SMTP_USER, CONFIG.SMTP_PASSWORD)
         if not dry_run:
-            s.send_message(msg=msg)
+            s.send_message(msg=_msg)
         s.close()
 
         logger.info(
-            f"send_mail{' (dry_run)' if dry_run else ''}: {msg['From']} -> {msg['To']}: {msg['Subject']}"
+            f"send_mail{' (dry_run)' if dry_run else ''}: {_msg['From']} -> {_msg['To']}: {_msg['Subject']}"
         )
         if dump:
-            with open(log_dir + "email.dump", "a") as f:
-                f.write(msg.as_string() + "\n")
+            os.makedirs(dump_dir, exist_ok=True)
+            with open(os.path.join(dump_dir, "email.dump"), "a") as f:
+                f.write(_msg.as_string() + "\n")
         return True
     except Exception as e:
         logger.error(e)
         if dump:
-            with open(log_dir + "failed_email.dump", "a") as f:
+            os.makedirs(dump_dir, exist_ok=True)
+            with open(os.path.join(dump_dir, "failed_email.dump"), "a") as f:
                 f.write(msg.as_string() + "\n")
         return False
 
 
 def _make_email(to_addr: str, subject: str, body: str) -> MIMEText:
-    CONFIG = _load_config()
     msg = MIMEText(body)
     msg["Subject"] = subject
-    msg["From"] = formataddr((CONFIG.SMTP_USERNAME, CONFIG.SMTP_USER))
     msg["To"] = to_addr
-    msg["Bcc"] = CONFIG.SMTP_USER
     return msg
 
 
@@ -202,23 +199,8 @@ def compose_emails(
         Path to the email template file. The template should contain placeholders ``{name}``, ``{title}``, and ``{errors}``,
         which will be replaced by the name of the contact person, the title of the paper, and the list of errors, respectively.
 
-        The following example shows a template file.
-
-        .. code-block:: text
-            :caption: template.txt
-
-            Dear {name},
-
-            Thank you for submitting your paper titled "{title}" to the our symposium.
-
-            We have reviewed your paper and found the following issues:
-
-            {errors}
-
-            Please revise your paper accordingly and resubmit it by the deadline.
-
-            Best regards,
-            Symposium Committee
+        .. literalinclude:: /py_examples/email_templates/initial_contact.txt
+            :language: text
 
     Returns
     -------
@@ -290,7 +272,7 @@ def save_emails(revise_json: str, msgs: list[MIMEText], out_dir: str = "") -> No
     """
     try:
         with open(revise_json) as f:
-            data = [ReviseItem(**r) for r in json.load(f)]
+            data = ReviseItemList(json.load(f))
     except FileNotFoundError:
         raise FileNotFoundError(f"Input JSON file not found: {revise_json}")
 

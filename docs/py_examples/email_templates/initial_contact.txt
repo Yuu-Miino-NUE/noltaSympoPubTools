@@ -1,0 +1,23 @@
+Dear Dr. {name},
+
+We hope you are doing well. Your manuscript titled "{title}" has been positively evaluated by our reviewers. We are delighted with the quality and significance of your research.
+
+However, before we proceed with the presentation at NOLTA 2023, we kindly request a revision of the manuscript's format to align it with our symposium guidelines. The modification is solely related to the document's structure, citation style, and other formatting elements, and does not involve any changes to the paper's content.
+
+The specific formatting requirements are available on the symposium's official website.
+
+https://nolta2023.org/guidelines.html
+
+Highlights of the requirements for your manuscript are as follows:
+==================================================================
+{errors}
+==================================================================
+
+We look forward to receiving the revised version by Aug. 18.
+
+Best regards,
+
+John Doe
+Ph. D. in Eng.
+Publication Co-Chairs of NOLTA 2023
+email: john@example.com
