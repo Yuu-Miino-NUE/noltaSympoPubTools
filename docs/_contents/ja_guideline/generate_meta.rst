@@ -83,6 +83,8 @@
 
 以上により，学会に提出可能な ``metadata_session.csv`` が生成されます．
 
+.. _metadata_article:
+
 ``metadata_article.csv`` の生成
 ---------------------------------
 
@@ -103,7 +105,7 @@
     * - ``awards.json``
       - 受賞情報
       - :class:`.Award`
-      - 本項目での説明
+      - :ref:`metadata_article`
 
 ``awards.json`` は，以下のような形式で作成します．詳しくは :class:`.Award` クラスを参照してください．
 

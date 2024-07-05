@@ -49,9 +49,9 @@ SS オーガナイザの情報（:ref:`ss_organizers.json <sso_json>`）
 原稿修正依頼メールの一括作成・送信
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. エラーメッセージ（err_msg.csv）
+1. エラーメッセージ（:ref:`err_msg.csv <err_msg>`）
     【自作】著者に伝えるエラーの内容（定型文）を作成します．
-2. 修正リスト（revise_sheet.csv）
+2. 修正リスト（:ref:`revise_sheet.csv<revise_sheet>`）
     【自作】修正対象論文のエラー内容をリスト化します．
 
 学会提出メタデータの自動生成
@@ -59,7 +59,7 @@ SS オーガナイザの情報（:ref:`ss_organizers.json <sso_json>`）
 
 1. メタデータのテンプレート CSV 3種
     【提供】メタデータのテンプレートファイルです．学会から提供されます．
-2. 学会共通情報（common.json）
+2. 学会共通情報（:ref:`common.json<common_csv>`）
     【自作】共通情報を記述します．
-3. 受賞者情報（awards.json）
+3. 受賞者情報（:ref:`awards.json <metadata_article>`）
     【自作】受賞論文の情報を記述します．
