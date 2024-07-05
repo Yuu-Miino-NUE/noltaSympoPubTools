@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "noltaSympoPubTools"
-version = "0.0.1"
+version = "0.1.0"
 authors = [{name = "Yuu Miino"}]
 description = "Tools for NOLTA Symposium Publication items."
 readme = "README.md"
@@ -22,3 +22,6 @@ dependencies = [
     "python-dotenv",
     "PdfStampTools@git+https://github.com/Yuu-Miino-NUE/PdfStampTools"
 ]
+
+[tool.setuptools.package-data]
+"*" = ["*.tex"]
