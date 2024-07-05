@@ -1,3 +1,7 @@
 .with-border > img {
     border: 1px solid #000;
 }
+
+.req-table {
+    vertical-align: middle;
+}
