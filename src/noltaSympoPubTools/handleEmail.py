@@ -199,9 +199,6 @@ def compose_emails(
         Path to the email template file. The template should contain placeholders ``{name}``, ``{title}``, and ``{errors}``,
         which will be replaced by the name of the contact person, the title of the paper, and the list of errors, respectively.
 
-        .. literalinclude:: /py_examples/email_templates/initial_contact.txt
-            :language: text
-
     Returns
     -------
     list[MIMEText]
@@ -219,6 +216,11 @@ def compose_emails(
 
     Examples
     --------
+    Prepare a template file like the following:
+
+    .. literalinclude:: /py_examples/email_templates/initial_contact.txt
+        :language: text
+
     Here is an example of how to use the :func:`compose_emails` function.
 
     .. literalinclude:: /py_examples/ex_compose_emails.py
