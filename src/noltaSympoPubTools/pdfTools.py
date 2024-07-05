@@ -40,6 +40,7 @@ def stamp_all_pdfs(
     output_pdfs_dir: str,
     encl: NumberEnclosure = "en_dash",
     verbose: bool = False,
+    overwrite_json: bool = False,
 ) -> SessionList:
     """Stamp overlays and page numbers on all PDFs in the input directory according to the data JSON.
 
@@ -57,7 +58,6 @@ def stamp_all_pdfs(
     output_pdfs_dir : str
         Path to the output PDF directory. The stamped PDF files will be saved in this directory.
         The filenames will be ``{session_code}{paper_order}.pdf``.
-
     encl : NumberEnclosure, optional
         .. _enclosures:
 
@@ -77,6 +77,9 @@ def stamp_all_pdfs(
 
     verbose : bool, optional
         Whether to print the progress, by default False.
+
+    overwrite_json : bool, optional
+        Whether to overwrite the input JSON file with the updated data, by default False.
 
     Returns
     -------
@@ -126,6 +129,9 @@ def stamp_all_pdfs(
                 page_start = page_start_next
                 if verbose:
                     print("Proceeded: pp.", p.pages)
+
+    if overwrite_json:
+        data.dump_json(data_json)
 
     return data
 
