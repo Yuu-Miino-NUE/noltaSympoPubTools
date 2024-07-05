@@ -66,7 +66,7 @@ class Award(BaseModel):
     See Also
     --------
     .AwardList: List of awards
-    .load_articles: Load award information from JSON file
+    .load_meta_articles: Load award information from JSON file
     """
 
     id: str
@@ -116,7 +116,7 @@ class CommonInfo(BaseModel):
     See Also
     --------
     .MetaCommon: Data class for common information
-    .load_common: Load common information from JSON file
+    .load_meta_common: Load common information from JSON file
 
     """
 
@@ -246,7 +246,7 @@ class Metadata:
         See Also
         --------
         .MetaCommon: Data class for common information
-        .load_common: Load common information from JSON file
+        .load_meta_common: Load common information from JSON file
         """
         _dump_metadata_csv(self, filename, template)
 
@@ -272,8 +272,8 @@ class MetadataList(list[TMD], Generic[TMD]):
         --------
         .MetaSessionList: List of session information
         .MetaArticleList: List of paper information
-        .json2meta_sessions: Load session information from JSON file
-        .load_articles: Load paper information from JSON file
+        .load_meta_sessions: Load session information from JSON file
+        .load_meta_articles: Load paper information from JSON file
         """
         _dump_metadata_csv(self, filename, template)
 
@@ -328,7 +328,7 @@ class MetaSession(Metadata):
     See Also
     --------
     .MetaSessionList : List of session information
-    .json2meta_sessions : Load session information from JSON file
+    .load_meta_sessions : Load session information from JSON file
     """
 
     def __init__(
@@ -403,7 +403,7 @@ class MetaArticle(Metadata):
     See Also
     --------
     .MetaArticleList : List of paper information
-    .load_articles : Load paper information from JSON file
+    .load_meta_articles : Load paper information from JSON file
     """
 
     def __init__(
@@ -452,7 +452,7 @@ class MetaSessionList(MetadataList[MetaSession]):
 
     See Also
     --------
-    .json2meta_sessions: Load session information from JSON file
+    .load_meta_sessions: Load session information from JSON file
     .MetaSession: Data class for session
     """
 
@@ -471,7 +471,7 @@ class MetaArticleList(MetadataList[MetaArticle]):
 
     See Also
     --------
-    .load_articles: Load paper information from JSON file
+    .load_meta_articles: Load paper information from JSON file
     .MetaArticle: Data class for paper
     """
 
@@ -511,7 +511,7 @@ class MetaCommon(Metadata):
 
     See Also
     --------
-    .load_common: Load common information from JSON file
+    .load_meta_common: Load common information from JSON file
     """
 
     def __init__(
@@ -772,7 +772,7 @@ class AwardList(BaseModelList[Award]):
     --------
     .Award: Data class for award
     .BaseModelList: List of basemodels
-    .load_articles: Load award information from JSON file
+    .load_meta_articles: Load award information from JSON file
     """
 
     def __init__(self, awards: list[dict] = []) -> None:
@@ -866,7 +866,7 @@ class SSOrganizerList(BaseModelList[SSOrganizer]):
     See Also
     --------
     .SSOrganizer: Data class for session
-    .json2meta_sessions: Load session information from JSON file
+    .load_meta_sessions: Load session information from JSON file
     """
 
     def __init__(self, ss_organizers: list[dict] = []) -> None:

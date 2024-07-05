@@ -20,10 +20,10 @@ from .models import (
     SSOrganizerList,
 )
 
-__all__ = ["load_common", "load_articles", "json2meta_sessions"]
+__all__ = ["load_meta_common", "load_meta_articles", "load_meta_sessions"]
 
 
-def json2meta_sessions(
+def load_meta_sessions(
     data_json: str, ss_organizers_json: str, common_json: str
 ) -> MetaSessionList:
     """Load session information from JSON file.
@@ -64,9 +64,9 @@ def json2meta_sessions(
         :caption: common.json
         :language: json
 
-    Here is an example of how to use the :func:`json2meta_sessions` function.
+    Here is an example of how to use the :func:`load_meta_sessions` function.
 
-    .. literalinclude:: /py_examples/ex_json2meta_sessions.py
+    .. literalinclude:: /py_examples/ex_load_meta_sessions.py
 
     For dumping the metadata CSV file, the template file should have the following structure:
 
@@ -133,7 +133,7 @@ def json2meta_sessions(
     return sessions
 
 
-def load_articles(data_json: str, award_json: str) -> MetaArticleList:
+def load_meta_articles(data_json: str, award_json: str) -> MetaArticleList:
     """Load article information from JSON file.
 
     Parameters
@@ -162,9 +162,9 @@ def load_articles(data_json: str, award_json: str) -> MetaArticleList:
         :caption: awards.json
         :language: json
 
-    Here is an example of how to use the :func:`load_articles` function.
+    Here is an example of how to use the :func:`load_meta_articles` function.
 
-    .. literalinclude:: /py_examples/ex_load_articles.py
+    .. literalinclude:: /py_examples/ex_load_meta_articles.py
 
     For dumping the metadata CSV file, the template file should have the following structure:
 
@@ -226,7 +226,7 @@ def load_articles(data_json: str, award_json: str) -> MetaArticleList:
     return papers
 
 
-def load_common(common_json: str) -> MetaCommon:
+def load_meta_common(common_json: str) -> MetaCommon:
     """Load common information from JSON file.
 
     Parameters
@@ -247,9 +247,9 @@ def load_common(common_json: str) -> MetaCommon:
         :caption: common.json
         :language: json
 
-    Here is an example of how to use the :func:`load_common` function.
+    Here is an example of how to use the :func:`load_meta_common` function.
 
-    .. literalinclude:: /py_examples/ex_load_common.py
+    .. literalinclude:: /py_examples/ex_load_meta_common.py
 
     For dumping the metadata CSV file, the template file should have the following structure:
 

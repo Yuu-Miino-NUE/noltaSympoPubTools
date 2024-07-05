@@ -1,4 +1,14 @@
 [
-    {"id": "C3L-15", "awards": ["Best Student Paper Award"]},
-    {"id": "A2L-32", "awards": ["Student Paper Award"]}
+    {
+        "id": "C3L-15",
+        "awards": [
+            "Best Student Paper Award"
+        ]
+    },
+    {
+        "id": "A2L-32",
+        "awards": [
+            "Student Paper Award"
+        ]
+    }
 ]
