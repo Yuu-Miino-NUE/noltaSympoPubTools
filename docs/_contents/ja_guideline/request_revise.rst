@@ -11,7 +11,7 @@
 
 体裁チェック時に利用した :ref:`チェック項目<err_msg>` を ``dict`` 型で読み出します．
 
-.. literalinclude:: /py_examples/ex_err_sheet2dict.py
+.. literalinclude:: /py_examples/ex_load_err_sheet.py
     :language: python
 
 チェックリストの読込と統合
@@ -45,6 +45,8 @@
 
     :class:`.ReviseItem`
         原稿修正リクエストの情報を保持するクラス
+
+.. _compose_email:
 
 メールの作成
 ------------------------------------------
@@ -142,3 +144,41 @@ SMTP サーバの設定は環境変数により指定します．
 
     [04/Jul/2024 15:28:34] INFO [email_logger:148] send_mail (dry_run): NOLTA 2023 Publication <ymiino@naruto-u.ac.jp> -> john@example.com: Revision request for paper 6000
 
+
+対応状況の確認
+------------------------------------------
+
+修正版の原稿 PDF を一つのディレクトリにまとめて置いておくと，
+:func:`.show_revise_summary` 関数によって対応状況を確認できます．
+
+.. literalinclude:: /py_examples/ex_show_revise_summary.py
+    :language: python
+
+出力される結果は次のようになります．
+
+.. code-block:: none
+
+    # all= missing + revised (rate % revised)
+    1 = 0 + 1 (100.00 % revised)
+
+    Not Revised IDs:
+
+    Revised IDs: 6000
+
+
+追加の対応依頼
+------------------------------------------
+
+原稿修正の催促であったり，追加の修正依頼を行う場合，まずは対象の ID のみを含む JSON ファイルを作成します．
+
+.. literalinclude:: /py_examples/ex_get_ritems.py
+    :language: python
+
+:func:`.show_revise_summary` 関数は，対応状況のサマリを出力するのと同時に，未対応の ID を返します．
+したがって，例えば次のようにして未対応の ID のみを含む JSON ファイルを作成できます．
+
+.. literalinclude:: /py_examples/ex_get_ritems2.py
+    :language: python
+
+あとの手順は上述した :ref:`compose_email` などと同様です．
+JSON のファイル名（``revise_items.json`` ではなく ``missing_items.json`` ）に注意してください．

@@ -1,7 +1,7 @@
-from noltaSympoPubTools.requestRevise import err_sheet2dict, load_revise_sheet
+from noltaSympoPubTools.requestRevise import load_err_sheet, load_revise_sheet
 
 
-err_dict = err_sheet2dict(err_sheet="err_msg.csv")
+err_dict = load_err_sheet(err_sheet="err_msg.csv")
 
 revise_items = load_revise_sheet(
     revise_sheet="revise_sheet.csv",

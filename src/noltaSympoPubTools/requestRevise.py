@@ -5,14 +5,14 @@ import numpy as np
 from .models import ReviseItem, ReviseItemList, SessionList
 
 __all__ = [
-    "err_sheet2dict",
+    "load_err_sheet",
     "load_revise_sheet",
     "get_ritems",
     "show_revise_summary",
 ]
 
 
-def err_sheet2dict(err_sheet: str) -> dict[str, str]:
+def load_err_sheet(err_sheet: str) -> dict[str, str]:
     """Convert error sheet to dictionary.
 
     Parameters
@@ -34,9 +34,9 @@ def err_sheet2dict(err_sheet: str) -> dict[str, str]:
     .. literalinclude:: /py_examples/err_msg.csv
         :caption: err_msg.csv
 
-    Here is an example of how to use the :func:`err_sheet2dict` function.
+    Here is an example of how to use the :func:`load_err_sheet` function.
 
-    .. literalinclude:: /py_examples/ex_err_sheet2dict.py
+    .. literalinclude:: /py_examples/ex_load_err_sheet.py
 
     Created dictionary will be used in :func:`load_revise_sheet`.
 
@@ -101,7 +101,7 @@ def load_revise_sheet(
 
     .. literalinclude:: /py_examples/ex_load_revise_sheet.py
 
-    Refer to :func:`err_sheet2dict` for creating the error dictionary.
+    Refer to :func:`load_err_sheet` for creating the error dictionary.
     The script will output a JSON file with the following structure.
 
     .. literalinclude:: /py_examples/revise_items.json
@@ -116,7 +116,7 @@ def load_revise_sheet(
     .ReviseItem: Data class for revision request
     .ReviseItemList: List of revision requests
     .SessionList: List of session information
-    .err_sheet2dict: Convert error sheet to dictionary
+    .load_err_sheet: Convert error sheet to dictionary
     .compose_emails: Compose emails for revision requests
     .send_email: Send emails for revision requests
     """
@@ -254,7 +254,7 @@ def get_ritems(revise_json: str, pids: set[int]) -> ReviseItemList:
     return ret
 
 
-def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
+def show_revise_summary(revise_json: str, revised_pdfs_dir: str) -> dict[str, set[int]]:
     """Show the summary of revised papers.
 
     Parameters
@@ -263,6 +263,11 @@ def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
         Path to the JSON file. The JSON file should have the structure of :class:`.ReviseItemList`.
     revised_pdfs_dir : str
         Directory path containing revised PDFs. PDF file names should be the paper IDs.
+
+    Returns
+    -------
+    dict[str, set[int]]
+        Dictionary of paper IDs for all, missing, and revised papers.
 
     Examples
     --------
@@ -274,11 +279,12 @@ def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
 
     .. code-block:: none
 
+        # all= missing + revised (rate % revised)
         1 = 0 + 1 (100.00 % revised)
 
-        - set()
+        Not Revised IDs:
 
-        + {6000}
+        Revised IDs: 6000
 
     - First line shows the total number of papers, the number of missing papers, the number of revised papers, and the revision rate.
     - Second line shows the missing paper IDs.
@@ -295,6 +301,7 @@ def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
     missing_ids = all_ids - revised_ids
 
     rate = len(revised_ids) / len(all_ids) * 100
+    print("# all= missing + revised (rate % revised)")
     print(
         len(all_ids),
         "=",
@@ -305,5 +312,11 @@ def show_revise_summary(revise_json: str, revised_pdfs_dir: str):
         end="\n\n",
     )
 
-    print("-", missing_ids, end="\n\n")
-    print("+", revised_ids)
+    print("Not Revised IDs:", *missing_ids, end="\n\n")
+    print("Revised IDs:", *revised_ids)
+
+    return {
+        "all": all_ids,
+        "missing": missing_ids,
+        "revised": revised_ids,
+    }
