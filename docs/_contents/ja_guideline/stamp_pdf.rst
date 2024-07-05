@@ -88,6 +88,13 @@ Overlay PDF を用意したら，原稿 PDF にスタンプを行います．
     :language: python
     :lines: 11-
 
+.. note::
+
+    簡単には，:func:`.stamp_all_pdfs` 関数の引数に ``overwrite_json=True`` を指定することで，元の JSON ファイルを上書きすることもできます．
+
+    .. literalinclude:: /py_examples/ex_stamp_all_pdfs2.py
+        :language: python
+
 .. seealso::
     :meth:`.dump_json`
         オブジェクトを JSON ファイルとして保存するメソッド．
