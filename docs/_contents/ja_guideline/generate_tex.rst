@@ -29,8 +29,8 @@ SS オーガナイザの情報はフォーマットが統一されていない�
 
     * - キー
       - 値
-    * - ``category``
-      - SS のカテゴリ（SS の ID に相当）
+    * - ``session_codes``
+      - SS に対応する session code のリスト
     * - ``title``
       - SS のタイトル
     * - ``ss_organizers``

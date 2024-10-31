@@ -56,7 +56,12 @@ def _ssSessionTex(sessions: str, ss_orgs: str):
     return ssSession
 
 
-def json2ss_tex(data_json: str, ss_organizers_json: str, output: str):
+def json2ss_tex(
+    data_json: str,
+    ss_organizers_json: str,
+    output: str,
+    session_name_prefix_cnt: int = 0,
+):
     """Extracts session data from ``data_json`` and ``ss_organizers_json`` and generates a LaTeX file.
 
     Parameters
@@ -67,6 +72,8 @@ def json2ss_tex(data_json: str, ss_organizers_json: str, output: str):
         Input JSON file path for session organizers. The JSON file should have the structure of :class:`.SSOrganizer`.
     output : str
         Output TeX file path.
+    session_name_prefix_cnt : int, optional
+        The number of words to be removed from the beginning of the session name, by default 0.
 
     Examples
     --------
@@ -99,9 +106,7 @@ def json2ss_tex(data_json: str, ss_organizers_json: str, output: str):
     .SSOrganizer: Data class for session
     """
     with open(data_json) as f:
-        ss_data = [
-            ss for ss in [Session(**s) for s in json.load(f)] if ss.category[0] == "s"
-        ]
+        data = [Session(**s) for s in json.load(f)]
     with open(ss_organizers_json) as f:
         orgs_data = [SSOrganizer(**sso) for sso in json.load(f)]
 
@@ -109,17 +114,19 @@ def json2ss_tex(data_json: str, ss_organizers_json: str, output: str):
 
     for rs in orgs_data:
         try:
-            _sessions = [s for s in ss_data if s.category == rs.category]
+            _sessions = [d for d in data if d.code in rs.session_codes]
             sessions_tex = "\\\\\n".join(
                 [
-                    _ssRecordTex(_s.code, " ".join(_s.name.split(" ")[1:]))
+                    _ssRecordTex(
+                        _s.code, " ".join(_s.name.split(" ")[session_name_prefix_cnt:])
+                    )
                     for _s in _sessions
                 ]
             )
             ss_orgs = _ssOrgsTex(rs.organizers)
             s_texs.append(_ssSessionTex(sessions_tex, ss_orgs))
         except ValueError:
-            print(f"Session {rs.category} not found in orgs.json")
+            print(f"Session {rs.session_codes} not found in orgs.json")
             continue
 
     with open(output, "w") as f:

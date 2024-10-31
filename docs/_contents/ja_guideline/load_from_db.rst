@@ -92,10 +92,8 @@ JSON の手動アップデート
 
     * - 必須項目
       - 説明
-    * - ``category``
-      - セッションのカテゴリ
-    * - ``category_order``
-      - カテゴリ内での順番
+    * - ``code``
+      - セッションのコード
     * - ``papers.id``
       - Paper ID
 

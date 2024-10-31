@@ -25,7 +25,7 @@ The output PDF file will include the logo and the symposium title in the margin 
 """
 
 import json, os
-from pypdf import PdfMerger
+from pypdf import PdfWriter
 
 from PdfStampTools import stamp_pdf, NumberEnclosure
 from .models import SessionList
@@ -216,7 +216,7 @@ def merge_all_pdfs(
     with open(data_json, "r") as f:
         data = SessionList(json.load(f))
 
-    merger = PdfMerger()
+    merger = PdfWriter()
     for session in data:
         for p in [s for s in session.papers if not s.plenary]:
             fname = os.path.join(input_pdf_dir, f"{session.code+str(p.order)}.pdf")

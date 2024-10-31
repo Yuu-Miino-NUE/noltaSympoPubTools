@@ -104,12 +104,13 @@ def load_meta_sessions(
     sessions = MetaSessionList()
 
     for ss in s_data:
-        if ss.category[0] != "s":
+        indices = [i for i, d in enumerate(ss_org_data) if ss.code in d.session_codes]
+        if len(indices) == 0:
             organizers = []
             org_affils = []
         else:
             try:
-                idx = [d.category for d in ss_org_data].index(ss.category)
+                idx = indices[0]
                 organizers = [o.name for o in ss_org_data[idx].organizers]
                 org_affils = [o.organization for o in ss_org_data[idx].organizers]
             except ValueError:
