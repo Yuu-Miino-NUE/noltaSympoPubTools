@@ -632,10 +632,6 @@ class Session(BaseModel):
         Session type.
     code : str
         Session code.
-    category : tuple[str, int | None]
-        Category information.
-    category_order : int | None
-        Category order.
     location : str
         Location.
     chairs : list[Person]
@@ -658,8 +654,6 @@ class Session(BaseModel):
     name: str
     type: str
     code: str
-    category: tuple[str, int | None]
-    category_order: int | None
     location: str
     chairs: list[Person]
     start_time: datetime
@@ -829,8 +823,8 @@ class SSOrganizer(BaseModel):
 
     Parameters
     ----------
-    category : tuple
-        Category information.
+    session_codes : list[str]
+        List of session codes.
     title : str
         Session title.
     organizers : list[Person]
@@ -849,7 +843,7 @@ class SSOrganizer(BaseModel):
     .SSOrganizerList: List of session organizers
     """
 
-    category: tuple
+    session_codes: list[str]
     title: str
     organizers: list[Person]
 

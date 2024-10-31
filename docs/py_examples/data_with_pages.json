@@ -3,11 +3,6 @@
         "name": "(S1-1) Special Session on Example",
         "type": "L",
         "code": "A2L-2",
-        "category": [
-            "s",
-            1
-        ],
-        "category_order": 1,
         "location": "Room 1",
         "chairs": [
             {

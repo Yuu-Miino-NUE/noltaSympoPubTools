@@ -15,7 +15,7 @@ __all__ = [
 
 
 def default_session_sort_func(s: Session) -> int:
-    """Default sort function for sessions. Sort by category and category_order. This function is compatible with the ``sort`` method of the list.
+    """Default sort function for sessions. Sort by Session code. This function is compatible with the ``sort`` method of the list.
 
     Parameters
     ----------
@@ -52,7 +52,7 @@ def update_sessions(
     data_json : str
         Input JSON filename.
     update_json : str
-        Update JSON filename. The fields ``category`` and ``category_order`` are necessary to identify the session.
+        Update JSON filename. The field code is necessary to identify the session.
         If updating papers, the field ``papers`` is also necessary.
         For each updating paper, the field ``id`` is necessary to identify the paper.
     overwrite : bool, optional
@@ -84,16 +84,10 @@ def update_sessions(
     with open(update_json) as f:
         update_dict = json.load(f)
 
-    # categories = [(s.category, s.category_order) for s in sessions]
-
     # Search for BaseModel Update
     for ud in update_dict:
         for idx, s in enumerate(sessions):
-            if (
-                s.category[0] == ud["category"][0]
-                and s.category[1] == ud["category"][1]
-                and s.category_order == ud["category_order"]
-            ):
+            if s.code == ud["code"]:
                 papers = ud.pop("papers")
                 update_session = s.model_copy(update=ud)
                 _update_papers(update_session, papers)
@@ -102,7 +96,7 @@ def update_sessions(
             else:
                 if idx == len(sessions) - 1:
                     raise ValueError(
-                        f"Session not found: {ud['category']} {ud['category_order']} ({update_json} / {data_json})"
+                        f"Session not found: {ud['code']} ({update_json} / {data_json})"
                     )
 
     if overwrite:
@@ -296,7 +290,14 @@ def load_epapers_sheet(
 
 def _timestring_to_object(time: str, tz_offset_h: int) -> datetime:
     """Convert time string to datetime object with specific timezone offset."""
-    return datetime.strptime(time, "%Y-%m-%d %H:%M").replace(
+    if "/" in time:
+        format = "%Y/%m/%d %H:%M"
+    elif "-" in time:
+        format = "%Y-%m-%d %H:%M"
+    else:
+        raise ValueError(f"Invalid time format {time}")
+
+    return datetime.strptime(time, format).replace(
         tzinfo=timezone(timedelta(hours=tz_offset_h))
     )
 
@@ -380,28 +381,10 @@ def _dict2sessions(
                     * (paper.order - 1)
                 )
 
-            # Set session category
-            # s: Special Session, r: Regular Session, p: Plenary Session, i: Invited Session
-            # input will: "Plenary 1", "Invited 2", "(S3-4) xxx", "(R5-6) yyy", "(R3) zzz"
-            # _cat will: ("p", None), ("i", None), ("s", 3), ("r", 5), ("r", 3)
-            # _cat_o will: None, None, 4, 6, None
-            if r["Session Name"][0] in ["P", "I"]:
-                _cat = (str(r["Session Name"][0]).lower(), None)
-                _cat_o = None
-            else:
-                num = str(r["Session Name"]).split(" ")[0][2:-1].split("-")
-                _cat = (
-                    "s" if r["Session Name"][1] == "S" else "r",
-                    int(num[0]),
-                )
-                _cat_o = None if len(num) == 1 else int(num[1])
-
             session = Session(
                 name=r["Session Name"],
                 type=r["Session Type"],
                 code=r["Session Code"],
-                category=_cat,
-                category_order=_cat_o,
                 location=r["Session Location"],
                 chairs=chairs,
                 start_time=st,

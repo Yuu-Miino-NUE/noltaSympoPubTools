@@ -29,8 +29,8 @@ SS オーガナイザの情報はフォーマットが統一されていない�
 
     * - キー
       - 値
-    * - ``category``
-      - SS のカテゴリ（SS の ID に相当）
+    * - ``session_codes``
+      - SS に対応する session code のリスト
     * - ``title``
       - SS のタイトル
     * - ``ss_organizers``
@@ -47,6 +47,11 @@ SS list の自動生成
 SS の情報をまとめたリストを TeX ソースファイルとして出力するためには，以下のスクリプトを実行します．
 
 .. literalinclude:: /py_examples/ex_json2ss_tex.py
+
+.. versionadded:: v20241031
+
+    `session_name_prefix_cnt` 引数を追加しました．SS ID がタイトルに含まれる場合には 1 を，含まれない場合には 0 を指定してください．
+    指定した数だけ先頭からの単語が削除されます．
 
 出力される TeX ソースファイルは，以下のような形式になります．
 
