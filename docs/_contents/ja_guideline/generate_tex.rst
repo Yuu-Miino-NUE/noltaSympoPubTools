@@ -48,6 +48,11 @@ SS の情報をまとめたリストを TeX ソースファイルとして出力
 
 .. literalinclude:: /py_examples/ex_json2ss_tex.py
 
+.. versionadded:: v20241031
+
+    `session_name_prefix_cnt` 引数を追加しました．SS ID がタイトルに含まれる場合には 1 を，含まれない場合には 0 を指定してください．
+    指定した数だけ先頭からの単語が削除されます．
+
 出力される TeX ソースファイルは，以下のような形式になります．
 
 .. literalinclude:: /py_examples/ss_list.tex
