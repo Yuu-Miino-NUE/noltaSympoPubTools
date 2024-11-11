@@ -279,7 +279,7 @@ def _spanelTex(code: str, name: str, chairnames: list[str]):
         _chairs = "\\tba"
 
     spanel = spanel.replace("CODE", code)
-    spanel = spanel.replace("NAME", name)
+    spanel = spanel.replace("NAME", _escape_tex(name))
     spanel = spanel.replace("CHAIRS", _chairs)
 
     return spanel
@@ -337,29 +337,38 @@ def json2spanel_texs(data_json: str, output_dir: str):
     with open(data_json) as f:
         data = [Session(**s) for s in json.load(f)]
 
-    out_dict: dict[str, list[dict[str, str]]] = {}
+    class _SessionTeX:
+        def __init__(self, order: int, tex: str):
+            self.order = order
+            self.tex = tex
+
+    out_dict: dict[str, list[_SessionTeX]] = {}
+    smin = 10000
     smax = 1
     for session in data:
         _tex = "& " + _spanelTex(
             session.code, session.name, [c.name for c in session.chairs]
         )
 
-        if (code := session.code[0:-2]) not in out_dict:
-            out_dict[code] = [
-                {
-                    "order": "0",
-                    "tex": _timeslotTex(session.start_time, session.end_time),
-                }
+        code_group, order = session.code.split("-")
+        if code_group not in out_dict:
+            out_dict[code_group] = [
+                _SessionTeX(0, _timeslotTex(session.start_time, session.end_time))
             ]
 
-        out_dict[code].append({"order": session.code[-1], "tex": _tex})
-        smax = max(smax, int(session.code[-1]))
+        order = int(ord(order))
+        out_dict[code_group].append(_SessionTeX(order, _tex))
+        smin = min(smin, order)
+        smax = max(smax, order)
 
-    for code, texs in out_dict.items():
-        _orders = [t["order"] for t in texs]
-        for r in range(1, smax + 1):
-            if str(r) not in _orders:
-                texs.insert(r, {"order": str(r), "tex": "& \\nosession"})
+    if smin > smax:
+        raise ValueError("Order of sessions is not correct.")
 
-        with open(f"{output_dir}/{code}.tex", "w") as f:
-            f.write("\n".join([t["tex"] for t in texs]))
+    for code_group, stexs in out_dict.items():
+        _orders = [t.order for t in stexs]
+        for r in range(smin, smax + 1):
+            if r not in _orders:
+                stexs.insert(r, _SessionTeX(r, "& \\nosession"))
+
+        with open(f"{output_dir}/{code_group}.tex", "w") as f:
+            f.write("\n".join([t.tex for t in stexs]))
