@@ -7,12 +7,16 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../src/"))
 
+from noltaSympoPubTools import __version__  # noqa: E402
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "noltaSympoPubTools"
 copyright = "2024, Yuu Miino"
 author = "Yuu Miino"
+version = __version__
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
