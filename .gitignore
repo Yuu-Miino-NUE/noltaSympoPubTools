@@ -192,4 +192,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-_apidocs
+docs/_apidocs
+src/noltaSympoPubTools/_version.py
