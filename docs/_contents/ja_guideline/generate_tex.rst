@@ -48,7 +48,7 @@ SS の情報をまとめたリストを TeX ソースファイルとして出力
 
 .. literalinclude:: /py_examples/ex_json2ss_tex.py
 
-.. versionadded:: v20241031
+.. versionadded:: v0.1.2
 
     `session_name_prefix_cnt` 引数を追加しました．SS ID がタイトルに含まれる場合には 1 を，含まれない場合には 0 を指定してください．
     指定した数だけ先頭からの単語が削除されます．
@@ -83,6 +83,10 @@ Session Panel とは，Session の情報をまとめたパネルです．
 Session Panel を TeX ソースファイルとして出力するためには，以下のスクリプトを実行します．
 
 .. literalinclude:: /py_examples/ex_json2spanel_texs.py
+
+.. versionadded:: v0.1.4
+
+    ``first_room_code`` および ``final_room_code``` 引数を追加しましたが，基本的には省略可能です．
 
 出力される TeX ソースファイルは，以下のような形式になります．
 

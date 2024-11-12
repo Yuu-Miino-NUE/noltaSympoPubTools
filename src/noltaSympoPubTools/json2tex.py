@@ -295,7 +295,12 @@ def _timeslotTex(start_time: datetime, end_time: datetime):
     return timeslot
 
 
-def json2spanel_texs(data_json: str, output_dir: str):
+def json2spanel_texs(
+    data_json: str,
+    output_dir: str,
+    first_room_code: str | None = None,
+    final_room_code: str | None = None,
+):
     """Extracts schedule data from data_json and generates LaTeX files.
 
     Parameters
@@ -304,6 +309,10 @@ def json2spanel_texs(data_json: str, output_dir: str):
         Input JSON file path. The JSON file should have the structure of :class:`.Session`.
     output_dir : str
         Output directory path.
+    first_room_code : str, optional
+        The first room code, by default None. If None, the first room code is the minimum ASCII code of the room codes supplied.
+    final_room_code : str, optional
+        The final room code, by default None. If None, the final room code is the maximum ASCII code of the room codes supplied.
 
     Examples
     --------
@@ -343,8 +352,8 @@ def json2spanel_texs(data_json: str, output_dir: str):
             self.tex = tex
 
     out_dict: dict[str, list[_SessionTeX]] = {}
-    smin = 10000
-    smax = 1
+    smin = int(ord(first_room_code)) if first_room_code is not None else 10000
+    smax = int(ord(final_room_code)) if final_room_code is not None else -1
     for session in data:
         _tex = "& " + _spanelTex(
             session.code, session.name, [c.name for c in session.chairs]
@@ -368,7 +377,7 @@ def json2spanel_texs(data_json: str, output_dir: str):
         _orders = [t.order for t in stexs]
         for r in range(smin, smax + 1):
             if r not in _orders:
-                stexs.insert(r, _SessionTeX(r, "& \\nosession"))
+                stexs.insert(r - smin + 1, _SessionTeX(r, "& \\nosession"))
 
         with open(f"{output_dir}/{code_group}.tex", "w") as f:
             f.write("\n".join([t.tex for t in stexs]))

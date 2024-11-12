@@ -4,10 +4,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
+from noltaSympoPubTools import __version__
 
 sys.path.insert(0, os.path.abspath("../src/"))
-
-from noltaSympoPubTools import __version__  # noqa: E402
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
