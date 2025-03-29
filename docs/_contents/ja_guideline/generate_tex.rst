@@ -133,10 +133,23 @@ Papers info を TeX ソースファイルとして出力するためには，以
 .. code-block:: latex
 
     \newenvironment{session}[5]{YOUR}{DEFINITION}
-    \newcommand{\pEntry}[8]{YOUR DEFINITION}
+    \newcommand{\pEntry}[9]{YOUR DEFINITION}
 
 もちろん，これらの環境・コマンドは自由にカスタマイズできるので，TeX システム側の仕様・デザインに応じて適宜変更してください．
 つまり，Proceedings と Abstract Collection で異なる定義を実装可能です．
+
+なお， ``\pEntry`` の最後の引数に与えてある ``\customindex`` は，Author Index を生成するための ``\index`` コマンドに相当し，
+TeX システム側で定義が必要な独自コマンドです．
+慣例に習い，「Family Name, Given Name」の順で出力させ，ページ番号に発表 ID を紐付けられるよう，
+下記のように定義されていることを想定しています．
+
+.. code-block:: latex
+
+    \newcommand{\nn}[2]{#2~(\texttt{#1})}
+    \newcommand{\customindex}[2]{\index{#1|nn{#2}}}
+
+複数著者の場合には複数の ``\customindex`` コマンドが出力されます．
+したがって，この引数（``#9``）を著者リストの直後に配置するだけで全著者分の index が生成されます．
 
 .. seealso::
     :func:`.json2papers_tex`
