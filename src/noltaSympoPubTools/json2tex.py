@@ -139,6 +139,7 @@ def _pEntryTex(
     page_from: int,
     page_to: int,
     authors: list[Person],
+    indices_tex: str,
     abstract: str,
     paper_id: str,
     keywords: list[str],
@@ -154,6 +155,7 @@ def _pEntryTex(
         "AUTHORS": _authors,
         "ABSTRACT": _abstract,
         "PAGE_FROM": page_from,
+        "INDICES": indices_tex,
     }
 
     if not plenary:
@@ -202,6 +204,12 @@ def _sessionTex(
     return session
 
 
+def _make_indices_tex(author: Person, session_code: str):
+    name_list = author.name.split(" ")
+    f_name = name_list[-1] + ", " + " ".join(name_list[:-1])
+    return "\\customindex{" + f_name + "}{" + session_code + "}"
+
+
 def json2papers_tex(data_json: str, output: str):
     """Extract papers information from JSON file and generate TeX file.
 
@@ -244,15 +252,18 @@ def json2papers_tex(data_json: str, output: str):
     for s in data:
         p_texs = [
             _pEntryTex(
-                s.code + f"{i+1}",
-                p.title,
-                p.pages[0] if p.pages is not None else 0,
-                p.pages[1] if p.pages is not None else 0,
-                p.authors,
-                p.abstract,
-                str(p.id),
-                p.keywords if p.keywords is not None else [],
-                p.plenary,
+                id=s.code + f"{i+1}",
+                title=p.title,
+                page_from=p.pages[0] if p.pages is not None else 0,
+                page_to=p.pages[1] if p.pages is not None else 0,
+                indices_tex="".join(
+                    [_make_indices_tex(a, s.code + f"{i+1}") for a in p.authors]
+                ),
+                authors=p.authors,
+                abstract=p.abstract,
+                paper_id=str(p.id),
+                keywords=p.keywords if p.keywords is not None else [],
+                plenary=p.plenary,
             )
             for i, p in enumerate(s.papers)
         ]
